@@ -9,7 +9,7 @@ log_det <- function(X, s = 1) {
 }
 
 #' @export
-h_det_grad <- function(X, s = 1) {
+log_det_grad <- function(X, s = 1) {
   d <- ncol(X)
   2 * solve(t(s * diag(d) - X * X)) * X
 }
