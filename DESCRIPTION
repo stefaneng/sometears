@@ -1,0 +1,14 @@
+Package: sometears
+Type: Package
+Title: NOTEARS objective optimization
+Version: 0.1.0
+Maintainer: Stefan Eng <engs@umich.edu>
+Description: Implements continuous structure learning functions for NOTEARS objectives.
+License: What license is it under?
+Encoding: UTF-8
+LazyData: true
+Authors@R: 
+    person(
+    given = "Stefan E.",
+    family = "Eng",
+    email = "engs@umich.edu", role = c("aut", "cre"))
