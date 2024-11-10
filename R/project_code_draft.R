@@ -130,35 +130,6 @@ find_idx_set_updated <- function(G_h, G_loss, Z, size_small, size_large) {
   return(list(idx_small = index_set_small, idx_large = index_set_large))
 }
 
-## These parts copy from the notears function in R
-loss.func <- function(X, W, loss.type='l2') { # ?
-  M <- X %*% W
-  if (loss.type=='l2') {
-    R <- X - M
-    loss <- 0.5 / dim(X)[1] * sum(R ** 2)
-  } else if (loss.type=='logistic') {
-    loss <- 1.0 / dim(X)[1] * sum(log(sum(exp(M)+1)) - X * M)
-  } else if (loss.type=='poisson') {
-    S <- exp(M)
-    loss <- 1.0 / dim(X)[1] * sum(S - X * M)
-  }
-  return(loss)
-}
-
-G.loss.func <- function(X, W, loss.type='l2') {
-  M <- X %*% W
-  if (loss.type=='l2') {
-    R <- X - M
-    G.loss <- -1.0 / dim(X)[1] * t(X) %*% R
-  } else if (loss.type=='logistic') {
-    G.loss <- 1.0 / dim(X)[1] * t(X) %*% (1.0 / (1 + exp(-1 * M)) - X)
-  } else if (loss.type=='poisson') {
-    S <- exp(M)
-    G.loss <- 1.0 / dim(X)[1] * t(X) %*% (S - X)
-  }
-  return(G.loss)
-}
-
 h.func <- function(W) {
   # 获取矩阵的维度
   d <- ncol(W)
@@ -216,8 +187,6 @@ update_topo_linear <- function(W, topo, idx, opt = 1) {
   return(list(W_0 = W_0, topo_0 = topo_0))
 }
 
-
-
 init_W_slice <- function(X, idx_y, idx_x) {
   y <- X[, idx_y]
   x <- X[, idx_x]
@@ -257,8 +226,8 @@ fit <- function(X, topo, no_large_search = -1, size_small = -1, size_large = -1,
   Z <- create_Z(topo)
   W <- init_W(X, Z)
 
-  loss <- loss.func(X, W)
-  G_loss <- G.loss.func(X, W)
+  loss <- loss_func_linear(X, W)
+  G_loss <- grad_loss_func_linear(X, W)
 
   h <- h.func(W)
   G_h <- G.h.func(W)
@@ -275,7 +244,7 @@ fit <- function(X, topo, no_large_search = -1, size_small = -1, size_large = -1,
 
     for (i in seq_len(idx_len)) {
       W_c <- update_topo_linear(W, topo, idx_set[[i]])$W_0
-      loss_c <- loss.func(X, W_c)
+      loss_c <- loss_func_linear(X, W_c)
       loss_collections[i] <- loss_c
     }
 
@@ -290,7 +259,7 @@ fit <- function(X, topo, no_large_search = -1, size_small = -1, size_large = -1,
 
         for (i in seq_along(idx_set)) {
           W_c <- update_topo_linear(W = W, topo = topo, idx = idx_set[i])[1]$W_0
-          loss_c <- loss.func(X, W_c)
+          loss_c <- loss_func_linear(X, W_c)
           loss_collections[i] <- loss_c
         }
 
@@ -307,8 +276,8 @@ fit <- function(X, topo, no_large_search = -1, size_small = -1, size_large = -1,
     }
     Z <- create_Z(topo)
     W <- init_W(X, Z)
-    loss <- loss.func(X, W)
-    G_loss <- G.loss.func(X, W)
+    loss <- loss_func_linear(X, W)
+    G_loss <- grad_loss_func_linear(X, W)
 
     h <- h.func(W)
     G_h <- G.h.func(W)
