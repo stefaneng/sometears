@@ -18,5 +18,4 @@ sim_linear_sem <- function(W, n = 1, Sigma = diag(ncol(W))) {
   inv_W <- solve(diag(d) - W)
   new_Sigma <-  inv_W %*% tcrossprod(Sigma, inv_W)
   MASS::mvrnorm(n = n, mu = rep(0, d), Sigma = new_Sigma)
-}B
-
+}
