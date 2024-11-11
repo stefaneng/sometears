@@ -25,6 +25,7 @@ dagma_fit_adam <- function(
       }
 
       linear_loss <- loss(X, W)
+      # TODO: Need to fix this.. doesn't seem to be correct
       l1_penalty <- l1_beta * torch_sum(torch_abs(W))
       h_ldet_value <- torch_h_logdet(W)
 
