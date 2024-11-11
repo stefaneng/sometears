@@ -13,6 +13,7 @@ dagma_fit_adam <- function(
   eps = 1e-08,
   trace = FALSE
   ) {
+  d <- ncol(X)
   W <- torch::torch_tensor(matrix(0, nrow = d, ncol = d), requires_grad = TRUE)
 
   # Adam optimizer
