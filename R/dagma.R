@@ -3,7 +3,7 @@ dagma_fit_adam <- function(
   X,
   loss = torch_l2,
   h_func = torch_h_logdet,
-  s = 1,
+  s = c(1, 0.9, 0.8, 0.7),
   mu = c(10, 1, 0.1, 0),
   epoch = c(rep(2e4, 3), 7e4),
   tol = 1e-6,
@@ -27,6 +27,12 @@ dagma_fit_adam <- function(
       epoch_i <- epoch[1]
     }
 
+    if (length(s) == length(mu)) {
+      s_i <- s[i]
+    } else {
+      s_i <- s[1]
+    }
+
     for (iter in 1:epoch_i) {
       optimizer$zero_grad()  # Reset gradients
       if (!is.null(objective)) {
@@ -36,7 +42,7 @@ dagma_fit_adam <- function(
       linear_loss <- loss(X, W)
       # TODO: Need to fix this.. doesn't seem to be correct
       l1_penalty <- l1_beta * torch_sum(torch_abs(W))
-      h_ldet_value <- torch_h_logdet(W)
+      h_ldet_value <- torch_h_logdet(W, s = s_i)
 
       objective <- mu_i * (linear_loss + l1_penalty) + h_ldet_value
 
@@ -53,7 +59,7 @@ dagma_fit_adam <- function(
     }
 
     if (trace) {
-      cat("Finished mu_i:", mu_i, "with objective:", as.numeric(objective$item()), "\n")
+      cat("Finished mu_i:", mu_i, "s_i:", s_i, "objective = ", as.numeric(objective$item()), "\n")
     }
   }
   return(W)
