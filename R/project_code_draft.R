@@ -130,27 +130,6 @@ find_idx_set_updated <- function(G_h, G_loss, Z, size_small, size_large) {
   return(list(idx_small = index_set_small, idx_large = index_set_large))
 }
 
-h.func <- function(W) {
-  # 获取矩阵的维度
-  d <- ncol(W)
-  I <- diag(1, d, d)
-  s <- 1
-  M <- s * I - abs(W)
-  h <- -log(det(M)) + d * log(s)
-  return(h)
-}
-
-
-G.h.func <- function(W) {
-  # 获取矩阵的维度
-  d <- ncol(W)
-  I <- diag(1, d, d)
-  s <- 1
-  M <- s * I - abs(W)
-  G_h <- t(solve(M)) %*% W
-  return(G_h)
-}
-
 update_topo_linear <- function(W, topo, idx, opt = 1) {
   # filter -1 in topo
   valid_topo <- topo[topo != -1]
@@ -229,8 +208,8 @@ fit <- function(X, topo, no_large_search = -1, size_small = -1, size_large = -1,
   loss <- loss_func_linear(X, W)
   G_loss <- grad_loss_func_linear(X, W)
 
-  h <- h.func(W)
-  G_h <- G.h.func(W)
+  h <- h_logdet(W)
+  G_h <- h_logdet_grad(W)
 
   idx_set_both <- find_idx_set_updated(G_h, G_loss, Z, size_small, size_large = size_large)
   idx_set_small <- idx_set_both$idx_small

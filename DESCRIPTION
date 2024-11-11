@@ -16,5 +16,6 @@ Suggests:
 Config/testthat/edition: 3
 Imports: 
     expm,
-    matrixcalc
+    matrixcalc,
+    torch
 RoxygenNote: 7.2.3
