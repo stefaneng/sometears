@@ -17,7 +17,7 @@ dagma_fit_adam <- function(
   W <- torch::torch_tensor(matrix(0, nrow = d, ncol = d), requires_grad = TRUE)
 
   # Adam optimizer
-  optimizer <- optim_adam(W, lr = lr, betas = betas, eps = eps)
+  optimizer <- torch::optim_adam(W, lr = lr, betas = betas, eps = eps)
   objective <- NULL
   obj_prev <- -1
   for (i in seq_along(mu)) {
@@ -42,7 +42,7 @@ dagma_fit_adam <- function(
 
       linear_loss <- loss(X, W)
       # TODO: Need to fix this.. doesn't seem to be correct
-      l1_penalty <- l1_beta * torch_sum(torch_abs(W))
+      l1_penalty <- l1_beta * torch::torch_sum(torch::torch_abs(W))
       h_ldet_value <- torch_h_logdet(W, s = s_i)
 
       objective <- mu_i * (linear_loss + l1_penalty) + h_ldet_value
