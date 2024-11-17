@@ -3,6 +3,16 @@ off_diagonal <- function(W) {
   xor(lower.tri(W), upper.tri(W))
 }
 
+#' Computes the spectral radius (the largest absolute eigenvalue) of a matrix
+#'
+#' @param W A matrix
+#'
+#' @return The spectral radius of the matrix
+#' @export
+#'
+#' @examples
+#' B <- matrix(c(0, 0.6, -0.5, 0), nrow = 2, byrow = TRUE)
+#' spectral_radius(B)
 spectral_radius <- function(W) {
   eigen_values <- eigen(W)$values
   max(abs(eigen_values))
@@ -37,14 +47,22 @@ is_dag <- function(W, threshold = 1e-5) {
 #' We can solve for W_{dir} = I - (I + W_{tot})^{-1} assume that the spectral radius (largest absolute eigenvalue) of W_{dir} < 1
 #' This condition is the same that abs(eigenvalue(W_{tot}) / (1 + eigenvalue(W_{tot}))) < 1
 #'
-#' @param W
-#' @param restrict_dag
-#' @param enforce_spectral_radius
+#' @param W A matrix of total linear effects
+#' @param restrict_dag A boolean indicating if the matrix must be a directed acyclic graph
+#' @param enforce_spectral_radius A boolean indicating if the spectral radius of W_{dir} must be less than 1. Generally not recommended to disable
 #'
-#' @return
+#' @return A matrix of direct effects
 #' @export
 #'
 #' @examples
+#' B <- matrix(c(0, 0.6, -0.5, 0), nrow = 2, byrow = TRUE)
+#' total_to_direct(B,  restrict_dag = F)
+#' all(zapsmall(direct_to_total(total_to_direct(B, restrict_dag = F), restrict_dag = F)) == B)
+#'
+#' B2 <- matrix(c(0,0,0,
+#'              1,0,0,
+#'              1,1,0), nrow = 3, byrow = TRUE)
+#' total_to_direct(B2)
 total_to_direct <- function(
   W,
   restrict_dag = TRUE,

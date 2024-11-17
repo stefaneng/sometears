@@ -2,4 +2,6 @@
 
 export(h_expm)
 export(h_logdet)
-export(h_logdet_grad)
+export(is_dag)
+export(spectral_radius)
+export(total_to_direct)
