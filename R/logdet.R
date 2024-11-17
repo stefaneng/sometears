@@ -1,5 +1,3 @@
-# From:
-
 #' Computes the log-determinant acyclicity characterization
 #'
 #' This function is exactly zero if and only if the matrix is a DAG.
