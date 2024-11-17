@@ -9,11 +9,13 @@ test_that("direct_to_total and total_to_direct are inverses", {
 
     # Sample direct effect matrix that have spectral radius < 1
     W <- matrix(runif(d^2, min = 0.05, max = 0.2), ncol = d, nrow = d)
-    U <- qr.Q(qr(W))
+    W_eigen <- eigen(W)
+    # Eigendecomposition but replace eigenvalues in correct range (-1, 1)
     eigenvals <- diag(runif(d, min = -1, max = 1))
-    W <- U %*% eigenvals
 
-    expect_equal(total_to_direct(direct_to_total(W, restrict_dag = F), restrict_dag = F), W)
+    W_new <- W_eigen$vectors %*% eigenvals %*% solve(W_eigen$vectors)
+
+    expect_equal(total_to_direct(direct_to_total(W_new, restrict_dag = F), restrict_dag = F), W_new)
   }
 })
 
@@ -28,9 +30,10 @@ test_that("direct_to_total and total_to_direct are inverses", {
 
     # Sample direct effect matrix that have direct spectral radius < 1
     W <- matrix(runif(d^2, min = 0.05, max = 0.2), ncol = d, nrow = d)
-    U <- qr.Q(qr(W))
-    eigenvals <- diag(runif(d, min = -0.5, max = 0.5))
-    W <- U %*% eigenvals
-    expect_equal(direct_to_total(total_to_direct(W, restrict_dag = F), restrict_dag = F), W)
+    W_eigen <- eigen(W)
+    eigenvals <- diag(runif(d, min = -0.5, max = 1.5))
+    # Eigendecomposition but replace eigenvalues in correct range (-0.5, infty)
+    W_new <- W_eigen$vectors %*% eigenvals %*% solve(W_eigen$vectors)
+    expect_equal(direct_to_total(total_to_direct(W_new, restrict_dag = F), restrict_dag = F), W_new)
   }
 })
