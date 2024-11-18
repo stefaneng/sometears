@@ -1,8 +1,3 @@
-off_diagonal <- function(W) {
-  # Lower or upper triangular but not both
-  xor(lower.tri(W), upper.tri(W))
-}
-
 #' Computes the spectral radius (the largest absolute eigenvalue) of a matrix
 #'
 #' @param W A matrix
@@ -14,7 +9,7 @@ off_diagonal <- function(W) {
 #' B <- matrix(c(0, 0.6, -0.5, 0), nrow = 2, byrow = TRUE)
 #' spectral_radius(B)
 spectral_radius <- function(W) {
-  eigen_values <- eigen(W)$values
+  eigen_values <- eigen(W, only.values = TRUE)$values
   max(abs(eigen_values))
 }
 
@@ -40,14 +35,14 @@ is_dag <- function(W, threshold = 1e-5) {
   all(eigen(abs(W) > threshold, only.values = TRUE)$values == 0)
 }
 
-#' Converts total effects to direct effects
+#' Converts total effects to direct effects and vise versa
 #'
 #' Assuming a matrix of total linear effects W we can convert this to a matrix of direct effects W_{dir}
 #' This assume that W_{tot} = W_{dir} + W_{dir}^2 + W_{dir}^3 + ...
 #' We can solve for W_{dir} = I - (I + W_{tot})^{-1} assume that the spectral radius (largest absolute eigenvalue) of W_{dir} < 1
 #' This condition is the same that abs(eigenvalue(W_{tot}) / (1 + eigenvalue(W_{tot}))) < 1
 #'
-#' @param W A matrix of total linear effects
+#' @param W A matrix of total/direct linear effects
 #' @param restrict_dag A boolean indicating if the matrix must be a directed acyclic graph
 #' @param enforce_spectral_radius A boolean indicating if the spectral radius of W_{dir} must be less than 1. Generally not recommended to disable
 #'
@@ -63,6 +58,7 @@ is_dag <- function(W, threshold = 1e-5) {
 #'              1,0,0,
 #'              1,1,0), nrow = 3, byrow = TRUE)
 #' total_to_direct(B2)
+#' @rdname total_direct_conversion
 total_to_direct <- function(
   W,
   restrict_dag = TRUE,
@@ -72,22 +68,18 @@ total_to_direct <- function(
   stopifnot(`W must be a DAG unless restrict_dag = FALSE` = !restrict_dag || is_dag(W))
 
   eigen_W <- eigen(W, only.values = TRUE)$values
-  if (enforce_spectral_radius && min(Re(eigen_W)) < -0.5) {
-    stop("Smallest eigenvalue of W < -0.5.
-         This will make rho(W_{dir}) > 1.
-         If you really want to do this then re-run with enforce_spectral_radius = FALSE")
-  }
+  eigen_dir <- eigen_W / (1 + eigen_W)
 
   # Eigenvalues of direct effect matrix W_{dir} = 1 - 1/(1 + eigen(W))
-  spec_radius <- max(abs(eigen_W))
-  spec_radius_dir <- spec_radius / (1 + spec_radius)
-  if (spec_radius_dir >= 1) {
+  spec_radius <- max(abs(eigen_dir))
+  if (spec_radius >= 1) {
     stop("Spectral radius of direct effect matrix >= 1. Not valid.")
   }
   result <- diag(d) - solve(diag(d) + W)
   return(result)
 }
 
+#' @rdname total_direct_conversion
 direct_to_total <- function(
   W,
   restrict_dag = TRUE) {
