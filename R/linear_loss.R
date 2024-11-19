@@ -1,12 +1,12 @@
 ## These parts copy from the notears function in R
-loss_func_linear <- function(X, W, loss.type='l2') { # ?
+loss_func_linear <- function(X, W, loss_type='l2') { # ?
   M <- X %*% W
-  if (loss.type=='l2') {
+  if (loss_type=='l2') {
     R <- X - M
     loss <- 0.5 / dim(X)[1] * sum(R ** 2)
-  } else if (loss.type=='logistic') {
+  } else if (loss_type=='logistic') {
     loss <- 1.0 / dim(X)[1] * sum(log(sum(exp(M)+1)) - X * M)
-  } else if (loss.type=='poisson') {
+  } else if (loss_type=='poisson') {
     S <- exp(M)
     loss <- 1.0 / dim(X)[1] * sum(S - X * M)
   }

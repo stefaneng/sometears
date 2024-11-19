@@ -65,22 +65,31 @@ assign_negative <- function(i, j, topo) {
 
 # update the topo
 create_new_topo_greedy <- function(topo, loss_collections, idx_set, loss, opt = 1) {
+  min_loss <- idx_set[which.min(loss_collections),,drop = TRUE]
+  #browser()
+  # Swap row and col in topo
+  create_new_topo(topo, min_loss, opt)
 
-  loss_table <- cbind(as.integer(unlist(idx_set)), matrix(loss_collections, ncol = 1))
-  loss_table_good <- loss_table[loss_collections < loss, ]
-  sorted_loss_table_good <- loss_table_good[order(loss_table_good[, 2]), ]
-  len_loss_table_good <- nrow(sorted_loss_table_good)
-
-  for (k in 1:len_loss_table_good) {
-    i <- as.integer(sorted_loss_table_good[k, 1])
-    j <- as.integer(sorted_loss_table_good[k, 2])
-    result <- assign_negative(i, j, topo_0)
-    topo_0 <- result$topo
-    if (result$succ) {
-      topo_0 <- create_new_topo(topo_0, c(i, j), opt)
-    }
-  }
-  return(topo_0)
+  # loss_table <- cbind(
+  #   idx_set,
+  #   loss = loss_collections
+  # )
+  # browser()
+  # loss_table_good <- loss_table[loss_table$loss < loss, ]
+  # sorted_loss_table_good <- loss_table_good[order(loss_table_good$loss), ]
+  # len_loss_table_good <- nrow(sorted_loss_table_good)
+  #
+  # topo_0 <- topo
+  # for (k in 1:len_loss_table_good) {
+  #   i <- as.integer(sorted_loss_table_good[k, 1])
+  #   j <- as.integer(sorted_loss_table_good[k, 2])
+  #   result <- assign_negative(i, j, topo_0)
+  #   topo_0 <- result$topo
+  #   if (result$succ) {
+  #     topo_0 <- create_new_topo(topo_0, c(i, j), opt)
+  #   }
+  # }
+  # return(topo_0)
 }
 
 # bool matrix Z Z[i, j] = True if i is before j in topo seq
@@ -127,7 +136,7 @@ find_idx_set_updated <- function(G_h, G_loss, Z, size_small, size_large) {
   index_set_small <- find_hgrad_index(G_h, Zc, thres = g_h_thre_small)
   index_set_large <- find_hgrad_index(G_h, Zc, thres = g_h_thre_large)
 
-  return(list(idx_small = index_set_small, idx_large = index_set_large))
+  return(list(idx_small = data.frame(index_set_small), idx_large = data.frame(index_set_large)))
 }
 
 update_topo_linear <- function(W, topo, idx, opt = 1) {
@@ -191,14 +200,16 @@ init_W <- function(X, Z) {
 }
 
 # fit the model
-fit <- function(X, topo, no_large_search = -1, size_small = -1, size_large = -1, loss.type='l2') {
+fit <- function(
+    X, topo, no_large_search = -1, size_small = -1, size_large = -1, loss_type='l2',
+    s = 1.1) {
   d <- ncol(X)
   size_info <- set_sizes_linear(d, size_small, size_large, no_large_search)
   size_small <- size_info[1]
   size_large <- size_info[2]
   no_large_search <- size_info[3]
   large_space_used <- 0
-
+browser()
   n <- nrow(X)
   d <- ncol(X)
 
@@ -208,39 +219,42 @@ fit <- function(X, topo, no_large_search = -1, size_small = -1, size_large = -1,
   loss <- loss_func_linear(X, W)
   G_loss <- grad_loss_func_linear(X, W)
 
-  h <- h_logdet(W)
-  G_h <- h_logdet_grad(W)
+  sr <- spectral_radius(W^2)
+
+  h <- h_logdet(W, s = sr + 0.05)
+  G_h <- h_logdet_grad(W, s = sr + 0.05)
 
   idx_set_both <- find_idx_set_updated(G_h, G_loss, Z, size_small, size_large = size_large)
   idx_set_small <- idx_set_both$idx_small
   idx_set_large <- idx_set_both$idx_large
 
-  idx_set <- as.list(idx_set_small)
+  idx_set <- idx_set_small
 
-  while (length(idx_set) > 0) {
-    idx_len <- length(idx_set)
-    loss_collections <- rep(0, idx_len)
-
-    for (i in seq_len(idx_len)) {
-      W_c <- update_topo_linear(W, topo, idx_set[[i]])$W_0
+  while (nrow(idx_set) > 0) {
+    idx_len <- nrow(idx_set)
+    browser()
+    loss_collections <- apply(idx_set, 1, function(idx){
+      W_c <- update_topo_linear(W = W, topo = topo, idx = idx)[1]$W_0
       loss_c <- loss_func_linear(X, W_c)
-      loss_collections[i] <- loss_c
-    }
+      return(loss_c)
+    })
 
     if (any(loss > min(loss_collections))) {
       cat("Find better loss in small space\n")
       topo <- create_new_topo_greedy(topo, loss_collections, idx_set, loss)
     } else {
       if (large_space_used < no_large_search){
-        idx_set <- unique(idx_set_large[!idx_set_large %in% idx_set_small])
-        idx_len <- length(idx_set)
-        loss_collections <- numeric(idx_len)
+        # Get the idx that are in idx_set_large but not in idx_set small
+        browser()
+        idx_set <- dplyr::anti_join(idx_set_large, idx_set_small, by = c("row", "col"))
+        idx_len <- nrow(idx_set)
+        # loss_collections <- numeric(idx_len)
 
-        for (i in seq_along(idx_set)) {
-          W_c <- update_topo_linear(W = W, topo = topo, idx = idx_set[i])[1]$W_0
+        loss_collections <- apply(idx_set, 1, function(idx){
+          W_c <- update_topo_linear(W = W, topo = topo, idx = idx)[1]$W_0
           loss_c <- loss_func_linear(X, W_c)
-          loss_collections[i] <- loss_c
-        }
+          return(loss_c)
+        })
 
         if (any(loss > loss_collections)) {
           cat("current loss :", loss, "and find better loss in large space\n")
@@ -250,20 +264,22 @@ fit <- function(X, topo, no_large_search = -1, size_small = -1, size_large = -1,
           cat("Using larger search space, but we cannot find better loss\n")
           break
         }
+      } else {
+        break
       }
-      break
     }
     Z <- create_Z(topo)
     W <- init_W(X, Z)
     loss <- loss_func_linear(X, W)
     G_loss <- grad_loss_func_linear(X, W)
 
-    h <- h.func(W)
-    G_h <- G.h.func(W)
+    cat("Spectral Radius of W: ", spectral_radius(W^2), "\n")
+    h <- h_logdet(W, s = s)
+    G_h <- h_logdet_grad(W, s = s)
     idx_set_both <- find_idx_set_updated(G_h, G_loss, Z, size_small, size_large = size_large)
     idx_set_small <- idx_set_both$idx_small
     idx_set_large <- idx_set_both$idx_large
-    idx_set <- as.list(idx_set_small)
+    idx_set <- idx_set_small
   }
 
   return(list(W = W, topo = topo, Z = Z, loss = loss))
