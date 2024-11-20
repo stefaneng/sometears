@@ -12,11 +12,11 @@ threshold_W <- function(W, threshold=0.3){
 
 # change i and j in topo
 # only tested the opt 1
-create_new_topo <- function(topo, idx, opt = 1) {
+create_new_topo <- function(topo, idx_i, idx_j, opt = 1) {
   topo_0 <- topo
 
-  i_pos <- which(topo_0 == idx[1])
-  j_pos <- which(topo_0 == idx[2])
+  i_pos <- which(topo_0 == idx_i)
+  j_pos <- which(topo_0 == idx_j)
 
 
   if (opt == 1) {
@@ -53,7 +53,7 @@ create_new_topo_greedy <- function(topo, loss_collections, idx_set, loss, opt = 
   min_loss <- idx_set[which.min(loss_collections),,drop = TRUE]
   #browser()
   # Swap row and col in topo
-  create_new_topo(topo, min_loss, opt)
+  create_new_topo(topo, idx_i = min_loss[1], idx_j = min_loss[2], opt)
 
   # loss_table <- cbind(
   #   idx_set,
@@ -122,17 +122,15 @@ find_idx_set_updated <- function(G_h, G_loss, Z, size_small = d, size_large = d 
   return(list(idx_small = data.frame(index_set_small), idx_large = data.frame(index_set_large)))
 }
 
-update_topo_linear <- function(W, X, topo, idx, opt = 1) {
+update_topo_linear <- function(W, X, topo, idx_i, idx_j, opt = 1) {
   # filter -1 in topo
   valid_topo <- topo[topo != -1]
 
   topo_0 <- valid_topo
   W_0 <- matrix(0, nrow = nrow(W), ncol = ncol(W))
-  i <- idx[1]
-  j <- idx[2]
 
-  i_pos <- which(valid_topo == i)
-  j_pos <- which(valid_topo == j)
+  i_pos <- which(valid_topo == idx_i)
+  j_pos <- which(valid_topo == idx_j)
 
   if (length(j_pos) > 0 && j_pos > 0) {
     W_0[, valid_topo[1:j_pos]] <- W[, valid_topo[1:j_pos]]
@@ -142,7 +140,7 @@ update_topo_linear <- function(W, X, topo, idx, opt = 1) {
     W_0[, valid_topo[(i_pos + 1):length(valid_topo)]] <- W[, valid_topo[(i_pos + 1):length(valid_topo)]]
   }
 
-  topo_0 <- create_new_topo(topo = topo_0, idx = idx, opt = opt)
+  topo_0 <- create_new_topo(topo = topo_0, idx_i = idx_i, idx_j = idx_j, opt = opt)
 
 
   if (length(j_pos) > 0 && length(i_pos) > 0 && j_pos <= i_pos) {
