@@ -40,6 +40,7 @@ fit_topo <- function(
     verbose = F) {
   d <- ncol(X)
   n <- nrow(X)
+  X <- as.matrix(X)
   model_type <- match.arg(model_type)
   if (model_type != "linear") stop("Not implemented: only linear models are supported.")
   if (is.null(size_small)) size_small <- topo_init_min_size(d, model_type = model_type)

@@ -1,15 +1,3 @@
-# Set the variables less than threshold to 0 in adj matrix
-threshold_W <- function(W, threshold=0.3){
-  n <- nrow(W)
-  m <- ncol(W)
-
-  W_new <- matrix(0, nrow=n, ncol=m)
-  W_new <- W
-  W_new[abs(W_new) < threshold] <- 0
-  return(W_new)
-}
-
-
 # change i and j in topo
 # only tested the opt 1
 create_new_topo <- function(topo, idx_i, idx_j, opt = 1) {
@@ -46,7 +34,6 @@ assign_negative <- function(i, j, topo) {
   }
   return(list(topo = topo, succ = succ))
 }
-
 
 # update the topo
 create_new_topo_greedy <- function(topo, loss_collections, idx_set, loss, opt = 1) {
@@ -166,15 +153,15 @@ init_W_slice <- function(X, idx_y, idx_x) {
 init_W <- function(X, Z) {
   d <- ncol(X)
   W <- matrix(0, d, d)
-  for (j in 1:d) {
-    non_Z_j <- which(!Z[, j])
 
-    if (length(non_Z_j) > 0) {
-      X_subset <- X[, non_Z_j, drop = FALSE]
-      y <- X[, j]
-      W[non_Z_j, j] <- coef(lm(y ~ X_subset - 1))
+  for (j in 1:d) {
+    dependent_idx <- which(!Z[, j])
+    X_reg <- as.matrix(X[, dependent_idx, drop = F])
+    y <- X[, j]
+    if (ncol(X) > 0) {
+      W[dependent_idx, j] <- coef(lm.fit(x = X_reg, y = y))
     } else {
-      W[, j] <- 0
+      W[,j] <- 0
     }
   }
   return(W)
