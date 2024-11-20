@@ -99,7 +99,7 @@ find_hgrad_index <- function(G_h, Z, thres = 1e-2) {
 
 
 # find possible pairs to change according to the gradient
-find_idx_set_updated <- function(G_h, G_loss, Z, size_small, size_large) {
+find_idx_set_updated <- function(G_h, G_loss, Z, size_small = d, size_large = d * (d - 1) / 2) {
   d <- nrow(Z)
   Zc <- Z
   diag(Zc) <- FALSE
@@ -112,9 +112,7 @@ find_idx_set_updated <- function(G_h, G_loss, Z, size_small, size_large) {
   }
   values <- G_h[Zc]
   values <- sort(values)
-  if (size_large == -1){
-    size_large <- d
-  }
+
   g_h_thre_small <- values[size_small]
   g_h_thre_large <- values[size_large]
 
