@@ -122,7 +122,7 @@ find_idx_set_updated <- function(G_h, G_loss, Z, size_small = d, size_large = d 
   return(list(idx_small = data.frame(index_set_small), idx_large = data.frame(index_set_large)))
 }
 
-update_topo_linear <- function(W, topo, idx, opt = 1) {
+update_topo_linear <- function(W, X, topo, idx, opt = 1) {
   # filter -1 in topo
   valid_topo <- topo[topo != -1]
 

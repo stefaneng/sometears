@@ -63,7 +63,7 @@ fit_topo <- function(
   while (nrow(idx_set) > 0) {
     idx_len <- nrow(idx_set)
     loss_collections <- apply(idx_set, 1, function(idx){
-      W_c <- update_topo_linear(W = W, topo = topo, idx = idx)$W_0
+      W_c <- update_topo_linear(W = W, X = X, topo = topo, idx = idx)$W_0
       loss_c <- loss_func_linear(X, W_c)
       return(loss_c)
     })
@@ -79,7 +79,7 @@ fit_topo <- function(
         # loss_collections <- numeric(idx_len)
 
         loss_collections <- apply(idx_set, 1, function(idx){
-          W_c <- update_topo_linear(W = W, topo = topo, idx = idx)[1]$W_0
+          W_c <- update_topo_linear(W = W, X = X, topo = topo, idx = idx)[1]$W_0
           loss_c <- loss_func_linear(X, W_c)
           return(loss_c)
         })
