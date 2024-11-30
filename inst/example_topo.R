@@ -13,9 +13,9 @@ X <- sim_linear_sem(B, n = 1000)
 (est_B <- fit_topo(X, c(1,4,2,3))$W)
 
 
-load('C:/Users/13259/Desktop/course doc/BIOSTAT615/assignment/final_project/sometears/data/sachs.rda')
+load('C:/Users/13259/Desktop/course doc/BIOSTAT615/assignment/final_project/sometears/data/sachs.rda') # load the sachs dataset
 d_sachs <- ncol(sachs)
-# sachs <- scale(sachs) if we do scale the output will be different in
+# sachs <- scale(sachs) # if we do scale the output will be different(tested with simulated data)
 (est_sachs <- fit_topo(as.matrix(sachs), 1:d_sachs, s=1.1)$W)
 
 
