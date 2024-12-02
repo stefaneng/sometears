@@ -1,6 +1,4 @@
-# sometears - Continuous Structure Learning in R
-
-<img src="man/figures/logo.png" align="right" height="139" alt="" />
+# sometears - Continuous Structure Learning in R <img src="man/figures/logo.png" align="right" height="139" alt="" />
 
 ## Introduction
 
