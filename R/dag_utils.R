@@ -35,7 +35,7 @@ is_dag <- function(W, threshold = 1e-5) {
   all(eigen(abs(W) > threshold, only.values = TRUE)$values == 0)
 }
 
-#' Converts total effects to direct effects and vise versa
+#' Converts total effects to direct effects and visa verse
 #'
 #' Assuming a matrix of total linear effects W we can convert this to a matrix of direct effects W_{dir}
 #' This assume that W_{tot} = W_{dir} + W_{dir}^2 + W_{dir}^3 + ...

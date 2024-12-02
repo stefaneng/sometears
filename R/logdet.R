@@ -19,12 +19,16 @@
 #' B_dag <- matrix(c(0,0,1,0), nrow = 2, byrow = TRUE)
 #' h_logdet(B_dag) # DAG means 0
 #' @rdname h_logdet
-h_logdet <- function(X, s = 1) {
+h_logdet <- function(X, s = 1, transform = c("square", "abs")) {
   d <- ncol(X)
-  X2 <- X * X
-  result <- -log(det(s * diag(d) - X2)) + d * log(s)
+  if (transform == "abs") {
+    X <- abs(X)
+  } else if (transform == "square") {
+    X <- X * X
+  }
+  result <- -log(det(s * diag(d) - X)) + d * log(s)
   if (is.nan(result)) {
-    sr <- spectral_radius(X2)
+    sr <- spectral_radius(X)
     warning("Determinant is negative. Consider increasing `s` above: ", sr)
   }
   result
@@ -32,6 +36,7 @@ h_logdet <- function(X, s = 1) {
 
 #' @rdname h_logdet
 h_logdet_grad <- function(X, s = 1) {
+  # TODO! Need to fix for abs and square option
   d <- ncol(X)
   2 * solve(t(s * diag(d) - X * X)) * X
 }
