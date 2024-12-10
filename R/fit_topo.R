@@ -8,11 +8,11 @@
 #' @param model_type The type of model to fit. Currently only linear models are supported.
 #' @param h_func The continuous acyclic function to use. See h_logdet.
 #' @param h_func_grad The gradient of the acyclic funtion to use. See h_logdet_grad.
-#' @param loss_type
-#' @param s
-#' @param verbose
+#' @param loss_type Currently only supports l2 loss
+#' @param s penalty parameter for the logdet function. Should be larger than the spectral radius of X.
+#' @param verbose A boolean indicating if the function should print out progress
 #'
-#' @return
+#' @return A list containing the estimated W matrix, the topological order, the Z matrix, and the loss
 #' @export
 #'
 #' @examples

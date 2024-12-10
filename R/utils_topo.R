@@ -133,7 +133,6 @@ find_idx_set_updated <- function(G_h, G_loss, Z, size_small = d, size_large = d 
 }
 
 update_topo_linear <- function(W, X, topo, idx_i, idx_j, opt = 1) {
-  # filter -1 in topo
   valid_topo <- topo[topo != -1]
 
   topo_0 <- valid_topo

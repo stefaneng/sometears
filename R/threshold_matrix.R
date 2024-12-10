@@ -3,7 +3,7 @@
 #' @param W A matrix
 #' @param threshold A threshold value
 #'
-#' @return
+#' @return W with values less than threshold set to 0
 #' @export
 #'
 #' @examples
