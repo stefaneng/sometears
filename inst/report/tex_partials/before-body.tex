@@ -1,0 +1,23 @@
+% Title Page
+\vspace{6em}
+\begin{center}
+    {\Large \textbf{$title$}} \\[1em]
+    {\large $subtitle$} \\[1em]
+    \textbf{$for(author)$$author$$sep$, $endfor$} \\[1em]
+    \today \\[1em]
+    $if(logo)$
+    \includegraphics[width=0.25\textwidth]{$logo$}
+    $endif$
+\end{center}
+\textbf{Abstract} \\[1em]
+% Add abstract text here
+$if(abstract)$
+$abstract$
+$else$
+\lipsum[1] % Replace this with your abstract text (maximum 200 words)
+$endif$
+\vspace{2em} \\[2em]
+% Add hyperlink
+\textbf{Code is available here: } \url{$github$} \\[1em]
+
+\newpage

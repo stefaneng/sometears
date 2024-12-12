@@ -1,0 +1,67 @@
+---
+title: "sometears"
+subtitle: "Continuous structure learning in R"
+author: ["Jacob Vidergar",
+  "Ye Tian", 
+  "Stefan Eng"]
+date: "`r Sys.Date()`"
+engine: knitr
+bibliography: sometears.bib
+execute:
+  echo: false
+  message: false
+  warning: false
+format:
+  pdf:
+    fig-pos: 'H'
+    documentclass: article
+    fontsize: 12pt
+    geometry:
+      - margin=1in
+    template-partials:
+      - tex_partials/title.tex
+      - tex_partials/before-body.tex
+include-in-header:
+  text: |
+    \usepackage{setspace}
+    \usepackage{lipsum}
+    \doublespacing
+    \linespread{2} % Enforce 25 lines per page
+abstract: |
+  Abstract
+logo: ../../sometears_logo.png
+github: https://github.com/stefaneng/885-Project
+---
+
+\setlength{\abovedisplayskip}{1pt}
+\setlength{\belowdisplayskip}{1pt}
+
+```{r setup}
+#| echo: false
+#| message: false
+#| warning: false
+
+print("Testing")
+```
+
+
+## Introduction
+
+In data science and causal inference, Directed Acyclic Graphs (DAGs) are key for understanding variable interactions and informing predictions and interventions. Despite their importance, learning DAG structures from data is challenging due to non-convex optimization issues.
+
+This project's goal is to develop an R package that optimizes DAG structure learning algorithms, addressing non-convex optimization challenges. It will provide a valuable tool for both researchers and practitioners, advancing causal inference methods. Through this process, we will gain insights into optimization algorithm design, implementation, and performance evaluation, laying a solid foundation for future work in this field.
+
+## Background
+
+This project aims to implement an R package that reproduces the Topo algorithm proposed in the paper "Optimizing NOTEARS Objectives via Topological Swaps." This algorithm provides an innovative solution to the non-convex optimization problems associated with learning the structure of Directed Acyclic Graphs (DAGs).
+
+The NOTEARS algorithm, introduced by Xun Zheng and colleagues in their 2018 paper "DAGs with NO TEARS: Continuous Optimization for Structure Learning," transformed traditional combinatorial optimization problems into continuous optimization problems, thus avoiding direct searching in the discrete DAG space. Building on this, the Topo algorithm, proposed in 2023, offers a refined approach to address non-convex optimization challenges by iteratively swapping node pairs in DAGs to discover better local minima and enhance the efficiency of the original algorithm.
+
+The primary implementation strategy involves integrating the dual-layer optimization algorithm from the paper with the foundational NOTEARS algorithm. The NOTEARS algorithm addresses the combinatorial optimization of DAGs by transforming it into a smooth continuous optimization problem through the introduction of a new function that enforces acyclic constraints. The optimization problem thus becomes a smooth, continuous optimization issue. Also the dual-layer optimization makes this algorithm more efficient and accurate
+
+\newpage
+
+## References
+
+::: {#refs}
+:::
