@@ -25,7 +25,7 @@ topo_init_max_size <- function(d, model_type = c('linear', 'nonlinear')) {
 # only tested the opt 1
 create_new_topo <- function(topo, idx_i, idx_j, opt = 1) {
   topo_0 <- topo
-
+  #browser()
   i_pos <- which(topo_0 == idx_i)
   j_pos <- which(topo_0 == idx_j)
 
@@ -46,11 +46,12 @@ create_new_topo <- function(topo, idx_i, idx_j, opt = 1) {
 # set pos_i to pos_j to -1
 assign_negative <- function(i, j, topo) {
   succ <- FALSE
-  if (length(which(topo == i)) > 0 && length(which(topo == j)) > 0) {
+  # browser()
+  if (any(topo == i) && any(topo == j)) {
     pos_i <- which(topo == i)
     pos_j <- which(topo == j)
 
-    if (pos_j[1] <= pos_i[1] && !any(topo[pos_j[1]:(pos_i[1] + 1)] == -1, na.rm = TRUE)) {
+    if (!any(topo[pos_j[1]:(pos_i[1])] == -1)) {
       topo[pos_j[1]:(pos_i[1])] <- -1
       succ <- TRUE
     }
@@ -60,31 +61,23 @@ assign_negative <- function(i, j, topo) {
 
 # update the topo
 create_new_topo_greedy <- function(topo, loss_collections, idx_set, loss, opt = 1) {
-  min_loss <- idx_set[which.min(loss_collections),,drop = TRUE]
+  # create_new_topo(topo, idx_i = min_loss[1], idx_j = min_loss[2], opt)
   #browser()
-  # Swap row and col in topo
-  create_new_topo(topo, idx_i = min_loss[1], idx_j = min_loss[2], opt)
+  loss_table <- data.frame(idx1 = idx_set[,1], idx2 = idx_set[,2], loss = loss_collections)
+  loss_table_good <- loss_table[loss_table$loss < loss, ]
+  loss_table_good <- loss_table_good[order(loss_table_good$loss), ]
 
-  # loss_table <- cbind(
-  #   idx_set,
-  #   loss = loss_collections
-  # )
-  # browser()
-  # loss_table_good <- loss_table[loss_table$loss < loss, ]
-  # sorted_loss_table_good <- loss_table_good[order(loss_table_good$loss), ]
-  # len_loss_table_good <- nrow(sorted_loss_table_good)
-  #
-  # topo_0 <- topo
-  # for (k in 1:len_loss_table_good) {
-  #   i <- as.integer(sorted_loss_table_good[k, 1])
-  #   j <- as.integer(sorted_loss_table_good[k, 2])
-  #   result <- assign_negative(i, j, topo_0)
-  #   topo_0 <- result$topo
-  #   if (result$succ) {
-  #     topo_0 <- create_new_topo(topo_0, c(i, j), opt)
-  #   }
-  # }
-  # return(topo_0)
+  topo_0 <- topo
+  for (k in 1:nrow(loss_table_good)) {
+     i <- as.integer(loss_table_good[k, 1])
+     j <- as.integer(loss_table_good[k, 2])
+     result <- assign_negative(i, j, topo_0)
+     topo_0 <- result$topo
+     if (result$succ) {
+       topo <- create_new_topo(topo, i, j, opt)
+     }
+  }
+   return(topo)
 }
 
 # bool matrix Z Z[i, j] = True if i is before j in topo seq
