@@ -1,0 +1,80 @@
+---
+title: "sometears"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{sometears}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(sometears)
+# For plotting
+library(ggdag)
+library(ggplot2)
+```
+
+# Introduction
+The sometears package is a collection of functions for estimating directed acyclic graphs (DAGs) from data.
+The package includes functions for estimating the adjacency matrix of a DAG, thresholding the adjacency matrix, and simulating data from a DAG.
+The package also includes functions for estimating the structure of a DAG from data, including functions for estimating the adjacency matrix of a DAG, thresholding the adjacency matrix, and simulating data from a simple linear SEM.
+The two main algorithms that the package implements are the DAGMA algorithm from Bello et al. (2023) and the TOPO algorithm from Deng et al. (2023).
+
+## Generate Data
+We can generate data from a simple linear SEM using the `sim_linear_sem` function.
+This function generates data from a simple linear SEM with a given adjacency matrix $W$ such that value $W_{i,j}$ represents the direct effects from variable $i$ to variable $j$.
+
+We simulate from the DAG by specifying the adjacency matrix $B$ and assume that the errors are normally distributed with mean 0 and variance 1 (See Peters and Bühlmann 2014 for more information).
+
+```{r}
+set.seed(13)
+B <- matrix(
+  c(0, 3, 0, 3,
+    0, 0, 3, 0,
+    0, 0, 0, 3,
+    0, 0, 0, 0),
+  nrow = 4, ncol = 4, byrow = TRUE)
+
+# Plot the DAG
+B_long <- adj_mat_to_long(B)
+B_long$name <- B_long$from
+ggdag(as_tidy_dagitty(B_long)) +
+  theme_void()
+
+# Simulate from the DAG
+d <- ncol(B)
+X <- sim_linear_sem(B, n = 100, Sigma = 1 * diag(ncol(B)))
+```
+
+## Estimate DAG with DAGMA
+DAGMA uses a path-finding algorithm to estimate the adjacency matrix of a DAG.
+We used the `torch` package in R to implement the DAGMA algorithm from Bello et al. (2023).
+Initially we used the ADAM optimizer but found that `torch::lbfgs` worked better for the algorithm.
+The algorithm is quite sensitive to the parameters and sometimes can be difficult to converge.
+
+```{r}
+dagma_W <- dagma_fit_linear(X, trace = T,
+  epoch = 10,
+  s = c(5, 3, 2, 1, 1),
+  lr = 0.5,
+  mu = c(10, 1, 0.1, 0.01, 0))
+
+print(threshold_W(dagma_W, threshold = 0.1))
+```
+
+## Estimate DAG with TOPO
+
+TOPO swaps pairs in a valid topological order that will decrease the loss function.
+We find that this algorithm works extremely fast in the linear case and is able to recover the true DAG.
+
+```{r}
+est_B <- fit_topo(X, d:1)
+print(round(est_B$W, 3))
+```
