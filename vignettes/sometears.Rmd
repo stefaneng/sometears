@@ -41,9 +41,9 @@ $$
 ```{r}
 set.seed(13)
 B <- matrix(
-  c(0, 3, 0, 3,
-    0, 0, 3, 0,
-    0, 0, 0, 3,
+  c(0, 2, 0, 2,
+    0, 0, -2, 0,
+    0, 0, 0, 2,
     0, 0, 0, 0),
   nrow = 4, ncol = 4, byrow = TRUE)
 
@@ -64,15 +64,67 @@ We used the `torch` package in R to implement the DAGMA algorithm from Bello et 
 Initially we used the ADAM optimizer but found that `torch::lbfgs` worked better for the algorithm.
 The algorithm is quite sensitive to the parameters and sometimes can be difficult to converge.
 This is a limitation of the algorithm and we are working on improving the convergence properties to better align with the python version.
+Note: This is not evaluated since torch needs to be installed via `torch::install_torch`
 
-```{r}
+```{r, eval = FALSE}
 dagma_W <- dagma_fit_linear(
   X,
   trace = T,
-  mu = c(10, 1, 0.1, 0.01, 0.001),
-  l1_beta = 0.05)
+  mu = c(1, 0.1, 0.01, 0.001),
+  l1_beta = 0.002)
+#> Params:  mu: 1, s: 1.1, epoch: 5, l1_beta: 0.002 
+#> torch_tensor
+#>  0.0993  0.4785 -0.4886  1.1276
+#>  0.1768  0.1299 -0.6467 -0.1957
+#> -0.1403 -0.1679  0.2113  1.1188
+#>  0.0325 -0.0920  0.2253  0.3827
+#> [ CPUFloatType{4,4} ][ requires_grad = TRUE ]
+#> Params:  mu: 0.1, s: 1.1, epoch: 5, l1_beta: 0.002 
+#> torch_tensor
+#>  0.0388  1.4284 -0.5675  1.7394
+#>  0.0376  0.0502 -1.4493 -0.2000
+#> -0.0355 -0.0480  0.0662  1.7507
+#> -0.0146 -0.0313  0.0459  0.0643
+#> [ CPUFloatType{4,4} ][ requires_grad = TRUE ]
+#> Params:  mu: 0.01, s: 1.1, epoch: 5, l1_beta: 0.002 
+#> torch_tensor
+#>  0.0059  1.9885 -0.1706  1.9246
+#>  0.0033  0.0052 -1.9058  0.0156
+#> -0.0020 -0.0030  0.0055  1.9915
+#> -0.0008 -0.0017  0.0030  0.0053
+#> [ CPUFloatType{4,4} ][ requires_grad = TRUE ]
+#> Params:  mu: 0.001, s: 1.1, epoch: 5, l1_beta: 0.002 
+#> torch_tensor
+#>  6.0011e-04  2.0275e+00 -1.4186e-01  1.9360e+00
+#>  3.2878e-04  5.1134e-04 -1.9381e+00  3.0202e-02
+#> -1.9423e-04 -2.9181e-04  5.4719e-04  2.0087e+00
+#> -7.4461e-05 -1.5909e-04  2.9662e-04  5.1541e-04
+#> [ CPUFloatType{4,4} ][ requires_grad = TRUE ]
 
-print(threshold_W(dagma_W, threshold = 0.1))
+print(round(dagma_W, 2))
+#>      [,1] [,2]  [,3] [,4]
+#> [1,]    0 2.03 -0.14 1.94
+#> [2,]    0 0.00 -1.94 0.03
+#> [3,]    0 0.00  0.00 2.01
+#> [4,]    0 0.00  0.00 0.00
+```
+
+## DAGMA with lbfgs 
+We also implemented the DAGMA algorithm with the L-BFGS optimizer from the `lbfgs` package.
+This adds a better way to do L1 penalty via L-BFGS.
+We found that the algorithm is still quite sensitive to the parameters and sometimes can be difficult to converge.
+A very small L1 penalty is needed for the algorithm to converge.
+
+
+```{r}
+dagma_W <- dagma_fit_linear_optim(
+  X,
+  trace = T,
+  s = 1.1, # logdet penalty
+  l1_beta = 0.0001, # Should be small or else it will not converge
+  mu = c(1, 0.1, 0.01))
+
+print(round(dagma_W, 2))
 ```
 
 ## Estimate DAG with TOPO

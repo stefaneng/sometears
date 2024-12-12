@@ -1,10 +1,10 @@
-l2_cov <- function(X_cov, W) {
+l2_cov <- function(W, X_cov) {
   I_W <- diag(1, nrow = nrow(W)) - W
   rhs <- X_cov %*% I_W
   0.5 * sum(diag(t(I_W) %*% rhs))
 }
 
-l2_cov_grad <- function(X_cov, W) {
+l2_cov_grad <- function(W, X_cov) {
   I_W <- diag(1, nrow = nrow(W)) - W
   return(-X_cov %*% I_W)
 }

@@ -4,7 +4,7 @@
 \alias{threshold_W}
 \title{Threshold a matrix by setting the variables less than threshold to 0}
 \usage{
-threshold_W(W, threshold = 0.3)
+threshold_W(W, threshold = 0.1)
 }
 \arguments{
 \item{W}{A matrix}
