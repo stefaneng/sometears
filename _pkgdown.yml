@@ -1,4 +1,6 @@
 url: https://stefaneng.github.io/sometears/
+home:
+  title: Continuous structure learning in R
 template:
   bootstrap: 5
 

@@ -3,11 +3,12 @@ Type: Package
 Title: NOTEARS objective optimization
 Version: 0.1.0
 Description: Implements continuous structure learning functions for NOTEARS objectives.
-License: What license is it under?
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Authors@R: c(
-    person("Stefan E.", "Eng", , "engs@umich.edu", role = c("aut", "cre")),
+    person("Stefan E.", "Eng", , "engs@umich.edu", role = c("aut", "cre"),
+    comment = c(ORCID = "0000-0002-5245-6507")),
     person("Jacob", "Vidergar", , "jacobvid@umich.edu", role = "ctb"),
     person("Ye", "Tian", , "tianyee@umich.edu", role = "ctb")
   )
@@ -25,5 +26,6 @@ Imports:
 RoxygenNote: 7.2.3
 Depends: 
     R (>= 2.10)
-URL: https://stefaneng.github.io/sometears/
+URL: https://stefaneng.github.io/sometears/, https://github.com/stefaneng/sometears
+BugReports: https://github.com/stefaneng/sometears
 VignetteBuilder: knitr

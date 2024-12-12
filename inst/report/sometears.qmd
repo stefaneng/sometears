@@ -47,17 +47,20 @@ print("Testing")
 
 ## Introduction
 
-In data science and causal inference, Directed Acyclic Graphs (DAGs) are key for understanding variable interactions and informing predictions and interventions. Despite their importance, learning DAG structures from data is challenging due to non-convex optimization issues.
-
-This project's goal is to develop an R package that optimizes DAG structure learning algorithms, addressing non-convex optimization challenges. It will provide a valuable tool for both researchers and practitioners, advancing causal inference methods. Through this process, we will gain insights into optimization algorithm design, implementation, and performance evaluation, laying a solid foundation for future work in this field.
+We implemented an R package that reproduces the TOPO (linear) algorithm [@deng2023] as well as the DAGMA (linear) algorithm [@bello2023] in R.
+These algorithm provides an innovative solution to the non-convex optimization problems associated with learning the structure of Directed Acyclic Graphs (DAGs).
+The project is named after the original continuous acyclicity function NOTEARS [@zheng2018].
 
 ## Background
 
-This project aims to implement an R package that reproduces the Topo algorithm proposed in the paper "Optimizing NOTEARS Objectives via Topological Swaps." This algorithm provides an innovative solution to the non-convex optimization problems associated with learning the structure of Directed Acyclic Graphs (DAGs).
+## Algorithm
 
-The NOTEARS algorithm, introduced by Xun Zheng and colleagues in their 2018 paper "DAGs with NO TEARS: Continuous Optimization for Structure Learning," transformed traditional combinatorial optimization problems into continuous optimization problems, thus avoiding direct searching in the discrete DAG space. Building on this, the Topo algorithm, proposed in 2023, offers a refined approach to address non-convex optimization challenges by iteratively swapping node pairs in DAGs to discover better local minima and enhance the efficiency of the original algorithm.
+## Evaluation
 
-The primary implementation strategy involves integrating the dual-layer optimization algorithm from the paper with the foundational NOTEARS algorithm. The NOTEARS algorithm addresses the combinatorial optimization of DAGs by transforming it into a smooth continuous optimization problem through the introduction of a new function that enforces acyclic constraints. The optimization problem thus becomes a smooth, continuous optimization issue. Also the dual-layer optimization makes this algorithm more efficient and accurate
+## Contributions
+
+Jacob and Ye independently implemented an initial version of the TOPO algorithm which we combined into a single version as well as running the python version on the Sachs dataset.
+Stefan implemented the DAGMA algorithms, the linear SEM evaluation and wrote the R package, the documentation and miscellaneous functions.
 
 \newpage
 
