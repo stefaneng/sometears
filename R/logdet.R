@@ -20,6 +20,7 @@
 #' h_logdet(B_dag) # DAG means 0
 #' @rdname h_logdet
 h_logdet <- function(X, s = 1, transform = c("square", "abs")) {
+  transform <- match.arg(transform)
   d <- ncol(X)
   if (transform == "abs") {
     X <- abs(X)

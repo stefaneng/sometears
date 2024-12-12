@@ -1,67 +1,81 @@
-# ADAM version of DAGMA
-dagma_fit_adam <- function(
+#' DAGMA algorithm to learn DAGs
+#'
+#' Implements the DAGMA algorithm to learn DAGs from Bello et al. (2023).
+#'
+#' @param X A matrix of data in which each of the columns is a variable of interest in a directed acyclic graph
+#' @param loss A loss function to use. Default is L2 loss.
+#' @param h_func The continuous acyclic function to use. Default is h_logdet.
+#' @param s A regularization parameter. Should be larger than the spectral radius of X.
+#' @param mu A vector of weights to put on the loss function.
+#' @param epoch ADAM optimizer epochs.
+#' @param tol Tolerance for convergence.
+#' @param l1_beta L1 regularization parameter.
+#' @param lr Learning rate for ADAM optimizer.
+#' @param betas Beta parameters for ADAM optimizer.
+#' @param eps Epsilon parameter for ADAM optimizer.
+#' @param trace Boolean to enable progress printing
+#'
+#' @return A matrix of the estimated W matrix
+#' @export
+#'
+#' @examples
+dagma_fit_linear <- function(
   X,
-  loss = torch_l2,
+  loss = torch_l2_cov,
   h_func = torch_h_logdet,
-  s = c(1, 0.9, 0.8, 0.7),
+  s = 1.1,
   mu = c(10, 1, 0.1, 0),
-  epoch = c(rep(2e4, 3), 7e4),
-  tol = 1e-6,
-  l1_beta = 0.01,
-  lr = 2e-4,
-  betas = c(0.9, 0.999),
-  eps = 1e-08,
+  epoch = 5,
+  l1_beta = 0.1,
+  lr = 1,
   trace = FALSE
   ) {
   d <- ncol(X)
+  X_cov <-  torch::torch_matmul(torch::torch_t(X), X) / nrow(X)
   W <- torch::torch_tensor(matrix(0, nrow = d, ncol = d), requires_grad = TRUE)
 
   # Adam optimizer
-  optimizer <- torch::optim_adam(W, lr = lr, betas = betas, eps = eps)
-  objective <- NULL
-  obj_prev <- -1
-  for (i in seq_along(mu)) {
-    mu_i <- mu[i]
-    if (length(epoch) == length(mu)) {
-      epoch_i <- epoch[i]
-    } else {
-      epoch_i <- epoch[1]
-    }
+  optimizer <- torch::optim_lbfgs(W, lr = lr)
 
-    if (length(s) == length(mu)) {
-      s_i <- s[i]
-    } else {
-      s_i <- s[1]
-    }
+  params <- data.frame(
+    mu,
+    s,
+    epoch,
+    l1_beta
+  )
 
-    for (iter in 1:epoch_i) {
-      optimizer$zero_grad()  # Reset gradients
-      if (!is.null(objective)) {
-        obj_prev <- objective$item()
-      }
+  for (i in 1:nrow(params)) {
+    # Note: this is not particularly efficient but really only using
+    # dataframe capability to pass parameters of varying lengths
+    params_i <- as.list(params[i,])
+    mu_i <- params_i$mu
+    epoch_i <- params_i$epoch
+    s_i <- params_i$s
+    l1_beta_i <- params_i$l1_beta
 
-      linear_loss <- loss(X, W)
-      # TODO: Need to fix this.. doesn't seem to be correct
-      l1_penalty <- l1_beta * torch::torch_sum(torch::torch_abs(W))
-      h_ldet_value <- torch_h_logdet(W, s = s_i)
+    .calc_loss <- function() {
+      optimizer$zero_grad()
+
+      linear_loss <- loss(X_cov, W)
+      l1_penalty <- l1_beta_i * torch::torch_norm(W, p = 1)
+      h_ldet_value <- h_func(W, s = s_i)
 
       objective <- mu_i * (linear_loss + l1_penalty) + h_ldet_value
 
       # Note: These are automatically computed gradients but we could provide them
       objective$backward()
+      objective
+    }
 
-      optimizer$step()
-
-      obj_new <- objective$item()
-
-      if (obj_prev > 0 && abs((obj_prev - obj_new) / obj_prev) <= tol) {
-        break
-      }
+    for (j in 1:epoch_i) {
+      optimizer$step(.calc_loss)
     }
 
     if (trace) {
-      cat("Finished mu_i:", mu_i, "s_i:", s_i, "objective = ", as.numeric(objective$item()), "\n")
+      cat("Params: ", paste0(names(params_i), ": ", params_i, collapse = ", "), "\n")
+      print(W)
     }
   }
-  return(W)
+
+  return(as.matrix(W))
 }

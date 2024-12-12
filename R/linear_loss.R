@@ -1,3 +1,14 @@
+l2_cov <- function(X_cov, W) {
+  I_W <- diag(1, nrow = nrow(W)) - W
+  rhs <- X_cov %*% I_W
+  0.5 * sum(diag(t(I_W) %*% rhs))
+}
+
+l2_cov_grad <- function(X_cov, W) {
+  I_W <- diag(1, nrow = nrow(W)) - W
+  return(-X_cov %*% I_W)
+}
+
 ## These parts copy from the notears function in R
 loss_func_linear <- function(X, W, loss_type='l2') { # ?
   M <- X %*% W
