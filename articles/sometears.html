@@ -36,6 +36,7 @@
 <li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
 </form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/stefaneng/sometears/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
 
@@ -51,7 +52,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>sometears</h1>
             
       
-
+      <small class="dont-index">Source: <a href="https://github.com/stefaneng/sometears/blob/main/vignettes/sometears.Rmd" class="external-link"><code>vignettes/sometears.Rmd</code></a></small>
       <div class="d-none name"><code>sometears.Rmd</code></div>
     </div>
 
@@ -90,12 +91,10 @@ We assume that the errors are normally distributed with mean 0 and
 variance
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Σ</mi><mo>=</mo><mtext mathvariant="normal">diag</mtext><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\Sigma = \text{diag}(1)</annotation></semantics></math>
 such that</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><mi>X</mi></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mi>X</mi><mi>W</mi><mo>+</mo><mi>ϵ</mi><mspace width="1.0em"></mspace><mi>ϵ</mi><mo>∼</mo><mi>N</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo>,</mo><mi>Σ</mi><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>I</mi><mo>−</mo><mi>W</mi><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo>−</mo><mn>1</mn></mrow></msup><mi>X</mi></mtd><mtd columnalign="left" style="text-align: left"><mo>∼</mo><mi>N</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo>,</mo><msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>I</mi><mo>−</mo><mi>W</mi><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo>−</mo><mi>T</mi></mrow></msup><mi>Σ</mi><msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>I</mi><mo>−</mo><mi>W</mi><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo>−</mo><mn>1</mn></mrow></msup><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"></mtd></mtr></mtable><annotation encoding="application/x-tex">
-\begin{aligned}
-X &amp;= X W + \epsilon \quad \epsilon \sim N(0, \Sigma)\\
-(I - W)^{-1} X &amp;\sim N(0, (I - W)^{-T} \Sigma (I - W)^{-1})\\
-\end{aligned}
-</annotation></semantics></math></p>
+<p><span class="math display">$$
+X = X W + \epsilon \quad \epsilon \sim N(0, \Sigma)\\
+(I - W)^{-1} X \sim N(0, (I - W)^{-T} \Sigma (I - W)^{-1})
+$$</span></p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">13</span><span class="op">)</span></span>
 <span><span class="va">B</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span></span>
