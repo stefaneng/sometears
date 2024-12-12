@@ -1,13 +1,18 @@
 <urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
 <url><loc>https://stefaneng.github.io/sometears/404.html</loc></url>
 <url><loc>https://stefaneng.github.io/sometears/LICENSE-text.html</loc></url>
+<url><loc>https://stefaneng.github.io/sometears/articles/index.html</loc></url>
+<url><loc>https://stefaneng.github.io/sometears/articles/sometears.html</loc></url>
 <url><loc>https://stefaneng.github.io/sometears/authors.html</loc></url>
 <url><loc>https://stefaneng.github.io/sometears/index.html</loc></url>
+<url><loc>https://stefaneng.github.io/sometears/reference/adj_mat_to_long.html</loc></url>
+<url><loc>https://stefaneng.github.io/sometears/reference/dagma_fit_linear.html</loc></url>
 <url><loc>https://stefaneng.github.io/sometears/reference/fit_topo.html</loc></url>
 <url><loc>https://stefaneng.github.io/sometears/reference/h_expm.html</loc></url>
 <url><loc>https://stefaneng.github.io/sometears/reference/h_logdet.html</loc></url>
 <url><loc>https://stefaneng.github.io/sometears/reference/index.html</loc></url>
 <url><loc>https://stefaneng.github.io/sometears/reference/is_dag.html</loc></url>
+<url><loc>https://stefaneng.github.io/sometears/reference/sim_linear_sem.html</loc></url>
 <url><loc>https://stefaneng.github.io/sometears/reference/spectral_radius.html</loc></url>
 <url><loc>https://stefaneng.github.io/sometears/reference/threshold_W.html</loc></url>
 <url><loc>https://stefaneng.github.io/sometears/reference/total_direct_conversion.html</loc></url>
