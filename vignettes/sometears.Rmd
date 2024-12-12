@@ -14,9 +14,8 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup}
+```{r setup, message=FALSE, warning=FALSE}
 library(sometears)
-# For plotting
 library(ggdag)
 library(ggplot2)
 ```
@@ -30,8 +29,14 @@ The two main algorithms that the package implements are the DAGMA algorithm from
 ## Generate Data
 We can generate data from a simple linear SEM using the `sim_linear_sem` function.
 This function generates data from a simple linear SEM with a given adjacency matrix $W$ such that value $W_{i,j}$ represents the direct effects from variable $i$ to variable $j$.
+We assume that the errors are normally distributed with mean 0 and variance $\Sigma = \text{diag}(1)$ such that
 
-We simulate from the DAG by specifying the adjacency matrix $B$ and assume that the errors are normally distributed with mean 0 and variance 1 (See Peters and Bühlmann 2014 for more information).
+$$
+\begin{aligned}
+X &= X W + \epsilon \quad \epsilon \sim N(0, \Sigma)\\
+(I - W)^{-1} X &\sim N(0, (I - W)^{-T} \Sigma (I - W)^{-1})\\
+\end{aligned}
+$$
 
 ```{r}
 set.seed(13)
@@ -50,7 +55,7 @@ ggdag(as_tidy_dagitty(B_long)) +
 
 # Simulate from the DAG
 d <- ncol(B)
-X <- sim_linear_sem(B, n = 100, Sigma = 1 * diag(ncol(B)))
+X <- sim_linear_sem(B, n = 500, Sigma = 1 * diag(ncol(B)))
 ```
 
 ## Estimate DAG with DAGMA
@@ -58,13 +63,14 @@ DAGMA uses a path-finding algorithm to estimate the adjacency matrix of a DAG.
 We used the `torch` package in R to implement the DAGMA algorithm from Bello et al. (2023).
 Initially we used the ADAM optimizer but found that `torch::lbfgs` worked better for the algorithm.
 The algorithm is quite sensitive to the parameters and sometimes can be difficult to converge.
+This is a limitation of the algorithm and we are working on improving the convergence properties to better align with the python version.
 
 ```{r}
-dagma_W <- dagma_fit_linear(X, trace = T,
-  epoch = 10,
-  s = c(5, 3, 2, 1, 1),
-  lr = 0.5,
-  mu = c(10, 1, 0.1, 0.01, 0))
+dagma_W <- dagma_fit_linear(
+  X,
+  trace = T,
+  mu = c(10, 1, 0.1, 0.01, 0.001),
+  l1_beta = 0.05)
 
 print(threshold_W(dagma_W, threshold = 0.1))
 ```
