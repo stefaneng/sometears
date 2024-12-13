@@ -1,9 +1,6 @@
 library(sometears)
 library(caret)
 
-eval_results_10 <- readRDS("evaluation_results_10.rds")
-eval_results_15 <- readRDS("evaluation_results_15.rds")
-
 confusion_to_df <- function(confusion) {
   tibble::rownames_to_column(
     data.frame(
@@ -73,10 +70,8 @@ all_results <- lapply(c(10, 15), function(d) {
   }, simplify = FALSE)
 
 
-  saveRDS(results, sprintf("eval_results/evaluation_results_%s.rds", d))
   results_df <- results_to_df(results)
   results_df$d <- d
-  saveRDS(results_df, sprintf("inst/report/evaluation_results_df_%s.rds", d))
 
   results_df
 })
@@ -85,4 +80,4 @@ confusion_results <- bind_rows(
   results_df
 )
 
-saveRDS(confusion_results, "confusion_results_plot.rds")
+saveRDS(confusion_results, "inst/report/confusion_results_plot.rds")

@@ -24,14 +24,10 @@ format:
 include-in-header:
   text: |
     \usepackage{setspace}
-    \usepackage{algorithm}
-    \usepackage{algpseudocode}
     \onehalfspacing
     \linespread{1.5}
-abstract: |
-  Abstract
 logo: ../../sometears_logo.png
-github: https://github.com/stefaneng/885-Project
+github: https://github.com/stefaneng/sometears/
 ---
 
 \setlength{\abovedisplayskip}{1pt}
@@ -45,6 +41,7 @@ library(sometears)
 library(knitr)
 library(ggplot2)
 library(dplyr)
+library(bnlearn)
 knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
 colortheme2 <- c("#FDB44E", "skyblue")
 theme_set(theme_classic())
@@ -52,12 +49,45 @@ theme_set(theme_classic())
 
 
 ## Introduction
+Network structure learning involves finding optimal solutions with the constraints that traits of interest have a directed acyclic graph (DAG) structure. Optimizing an objective function with the combinatorial constraint of a DAG is a difficult problem due to the number of DAGs increasing super-exponentially [@rodionov1992] so it is difficult to explore the entire graph space.
+The issue of finding a directed acyclic graph is related to finding a topological sort of a graph, i.e., a temporal ordering of the nodes in the graph such that for any i < j, there is no edge from node j to node i.
+This ordering is not generally unique and only exists if the graph is acyclic.
+Recent work has involved transforming the combinatorial acyclicity constraint to a continuous optimization problem [@bello2023; @wei2020; @zheng2018].
+The objective function with a DAG constraint is non-convex and has issues with local optimum.
+The TOPO algorithm attempts to solve this problem by iteratively swapping elements in a valid topological order so that the solutions are always acyclic, and can escape local minimum.
 
+
+
+## Problem Statement
+
+The goal of this project is to develop an R package for directed acyclic graph structure learning.
+This work is motivated by the importance of DAGs in causal inference, where they are used to model dependencies among variables in a way that allows for robust identification of causal relationships. 
+Existing approaches to DAG learning typically rely on Python implementations due to the language's popularity in the machine learning community.
 We implemented an R package that reproduces the TOPO (linear) algorithm [@deng2023] as well as the DAGMA (linear) algorithm [@bello2023] in R.
 These algorithm provides an innovative solution to the non-convex optimization problems associated with learning the structure of Directed Acyclic Graphs (DAGs).
 The project is named after the original continuous acyclicity function NOTEARS [@zheng2018].
 
-## Background
+Given an objective function $Q(\Theta; X)$, where $\Theta$ is the parameter vector of the DAG and $X$ is the data matrix, the problem is to find the optimal $\Theta$ that minimizes the objective function while satisfying the acyclicity constraint.
+An acyclicty function $h$ is used to enforce the acyclicity constraint and is continuous and differentiable.
+
+The basic idea behind continuous structure learning is to transfer the combinatoral constraint to a continuous optimization
+
+$$
+\begin{aligned}
+\underset{\Theta}{\min}\  Q(\Theta; X) &\text{ subject to } \Theta \text{ is acyclic}\\
+&\downarrow\\
+\underset{\Theta}{\min}\ Q(\Theta;X) &\text{ subject to } h(\theta) = 0 
+\end{aligned}
+$$
+
+TOPO also aims to solve this problem but by iteratively swapping elements in a valid topological order so that the solutions are always acyclic.
+
+$$
+\min_{\theta \sim \pi} Q(\Theta; X)
+$$
+
+where $\pi$ is a valid topological order.
+TOPO leverages the gradients of $h$ and $Q$ to iteratively swap elements in a valid topological order so that the solutions are always acyclic.
 
 ## Algorithm
 
@@ -81,7 +111,6 @@ h_{\text{ldet}}^s(W) &:= -\log \det (s I - W \circ W) + d \log s\\
 $$
 
 The authors note that _each_ computation of $h_{ldet}$ takes $O(d^3)$ operations.
-
 The algorithm starts by optimizing more heavily towards the loss function and $\ell_1$ norm and gradually shifts towards making the solution acyclic.
 
 - Input:
@@ -91,16 +120,33 @@ The algorithm starts by optimizing more heavily towards the loss function and $\
   - $\beta_1$: $\ell_1$ regularization parameter (e.g. $0.1$)
 - Output: $W$, the adjacency matrix of the DAG that best maximizes the objective function.
 
-For each $\mu_t \in mu$ solve the optimization problem:
+For each $\mu_t \in \mu$ solve the optimization problem, initializing at the previous $\theta^{(t)}$ value.
 
 $$
 \theta^{(t + 1)} = \underset{\theta}{\text{arg min}}~ \mu_t \left[ Q(\theta; X) +  \beta_1 \| \theta\|_1 \right] + h_{ldet}^s(W(\theta))
 $$
 
-The DAGMA algorithm does not specify a specific way to solve this problem but the authors use the ADAM optimizer [@kingma2017].
+The DAGMA algorithm is flexible in the way to solve this inner optimization but the authors use the ADAM optimizer [@kingma2017].
 
 ### TOPO
 The TOPO algorithm [@deng2023] aims to solve the same problem as DAGMA but aims to do so by iteratively swapping elements in a valid topological order so that the solutions is always acyclic.
+We need the partial derivative of the score function $Q$ at every $\theta_{ij}$: $\frac{\partial{Q(\Theta)}}{{\partial \theta_{ij}}}$.
+Define the following set
+
+$$
+\mathcal Y(\Theta, \tau, \xi) = \left\{ (i, j)~ \Big| ~\left[
+\nabla h(|\theta|)
+\right]_{ij}\leq \tau, \left \| \frac{\partial{Q(\Theta)}}{\partial \theta_{ij}} \right\|_1 > \xi \right\}
+$$
+
+The outline of the algorithm is as follows:
+
+1. Initialize an ordering of the variables $\pi^{(0)}$
+2. Find all candidate pairs of swaps in the set $\mathcal Y(\Theta_\pi^*, \tau^*, \xi^*)$ that would improve the objective function
+3. Select the best swap and up date the ordering $\pi^{(t + 1)}$
+4. Repeat until no more swaps can be made
+
+A detailed description and technical details to why this algorithm works can be found in the original paper.
 
 ## Evaluation
 
@@ -126,11 +172,11 @@ We decided to focus our efforts on the TOPO implementation rather than optimizin
 
 ```{r results-plot}
 #| label: fig-results-plot
-#| fig-height: 6
+#| fig-height: 5
 #| fig-width: 8
 #| fig-cap: "Comparison of the two DAGMA methods and the TOPO method on a linear SEM simulation."
 
-conusion_results <- readRDS("confusion_results_plot.rds")
+confusion_results <- readRDS("confusion_results_plot.rds")
 
 confusion_results %>%
   filter(metric %in% c("Accuracy", "Sensitivity", "Specificity", "F1")) %>%
@@ -147,6 +193,35 @@ ggplot(., aes(x = method, y = value, fill = as.factor(d))) +
 The Sachs dataset [@sachs2005] is a commonly used dataset benchmark in the study of causal network discovery.
 This dataset contains data on protein-signaling networks of continuous measurements of protein and phospholipid expression levels in human immune cells obtained through single cell analysis.
 The reason this dataset is used is that there is a known gold standard causal network that we can compare our results to.
+Our results are identical to those of the python package implemented in the DAGMA package, as shown in @fig-sachs.
+
+```{r sachs}
+#| fig-height: 5
+#| fig-width: 8
+#| fig-cap: "The estimated DAG from the Sachs dataset using the TOPO algorithm."
+#| label: fig-sachs
+data(sachs)
+set.seed(1234)
+
+d_sachs <- ncol(sachs)
+est_sachs <- fit_topo(as.matrix(sachs), 1:d_sachs, s=1.1)$W
+
+col_names <- colnames(sachs)
+result_df <- data.frame(from = character(), to = character(), strength = numeric(), direction = character(), stringsAsFactors = FALSE)
+threshold_graph <- 0.5
+for (i in 1:nrow(est_sachs)) {
+  for (j in 1:ncol(est_sachs)) {
+    if ((est_sachs[i, j] > threshold_graph) || (est_sachs[i, j] < -threshold_graph)) {
+      new_row <- data.frame(from = col_names[i], to = col_names[j])
+      result_df <- rbind(result_df, new_row)
+    }
+  }
+}
+
+dag <- bnlearn::empty.graph(nodes = colnames(sachs))
+bnlearn::arcs(dag) <- result_df
+bnlearn::graphviz.plot(dag)
+```
 
 
 ## Contributions

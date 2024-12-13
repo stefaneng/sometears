@@ -31,6 +31,23 @@
   keywords = {Computer Science - Machine Learning,Statistics - Machine Learning}
 }
 
+@misc{kingma2017,
+  title = {Adam: {{A Method}} for {{Stochastic Optimization}}},
+  shorttitle = {Adam},
+  author = {Kingma, Diederik P. and Ba, Jimmy},
+  year = {2017},
+  month = jan,
+  number = {arXiv:1412.6980},
+  eprint = {1412.6980},
+  primaryclass = {cs},
+  publisher = {arXiv},
+  doi = {10.48550/arXiv.1412.6980},
+  urldate = {2024-12-13},
+  abstract = {We introduce Adam, an algorithm for first-order gradient-based optimization of stochastic objective functions, based on adaptive estimates of lower-order moments. The method is straightforward to implement, is computationally efficient, has little memory requirements, is invariant to diagonal rescaling of the gradients, and is well suited for problems that are large in terms of data and/or parameters. The method is also appropriate for non-stationary objectives and problems with very noisy and/or sparse gradients. The hyper-parameters have intuitive interpretations and typically require little tuning. Some connections to related algorithms, on which Adam was inspired, are discussed. We also analyze the theoretical convergence properties of the algorithm and provide a regret bound on the convergence rate that is comparable to the best known results under the online convex optimization framework. Empirical results demonstrate that Adam works well in practice and compares favorably to other stochastic optimization methods. Finally, we discuss AdaMax, a variant of Adam based on the infinity norm.},
+  archiveprefix = {arXiv},
+  keywords = {Computer Science - Machine Learning}
+}
+
 @article{peters2014,
   title = {Identifiability of {{Gaussian}} Structural Equation Models with Equal Error Variances},
   author = {Peters, J. and B{\"u}hlmann, P.},
@@ -45,6 +62,49 @@
   issn = {0006-3444},
   urldate = {2024-10-14},
   abstract = {We consider structural equation models in which variables can be written as a function of their parents and noise terms, which are assumed to be jointly independent. Corresponding to each structural equation model is a directed acyclic graph describing the relationships between the variables. In Gaussian structural equation models with linear functions, the graph can be identified from the joint distribution only up to Markov equivalence classes, assuming faithfulness.In this work, we prove full identifiability in the case where all noise variables have the same variance: the directed acyclic graph can be recovered from the joint Gaussian distribution.Our result has direct implications for causal inference: if the data follow a Gaussian structural equation model with equal error variances, then, assuming that all variables are observed, the causal structure can be inferred from observational data only. We propose a statistical method and an algorithm based on our theoretical findings.}
+}
+
+@article{rodionov1992,
+  title = {On the Number of Labeled Acyclic Digraphs},
+  author = {Rodionov, V. I.},
+  year = {1992},
+  month = aug,
+  journal = {Discrete Mathematics},
+  volume = {105},
+  number = {1},
+  pages = {319--321},
+  issn = {0012-365X},
+  doi = {10.1016/0012-365X(92)90155-9},
+  urldate = {2024-10-10},
+  abstract = {Let An(x) denote the generating function for all labeled acyclic digraphs of order n, i.e. An(x) = {$\sum\infty$}r=0Anrxr, where Anr is equal to the number of labeled acyclic digraphs on n points with r arcs. The following recurrence holds {$\sum$}m=1n(-1)m-1nm(1+x)m(n-m)Am(x)=1 The generating function A(t)=def{$\sum$}n=0{$\infty$}Ann!2-(m2)tn (where An = An(1) is the number of labeled acyclic digraphs of order n) is given by the formula A(t)={$\sum$}m=0{$\infty$}(-1)mm!2-(m2tm-1}
+}
+
+@article{sachs2005,
+  title = {Causal {{Protein-Signaling Networks Derived}} from {{Multiparameter Single-Cell Data}}},
+  author = {Sachs, Karen and Perez, Omar and Pe'er, Dana and Lauffenburger, Douglas A. and Nolan, Garry P.},
+  year = {2005},
+  month = apr,
+  journal = {Science},
+  volume = {308},
+  number = {5721},
+  pages = {523--529},
+  publisher = {American Association for the Advancement of Science},
+  doi = {10.1126/science.1105809},
+  urldate = {2024-10-11},
+  abstract = {Machine learning was applied for the automated derivation of causal influences in cellular signaling networks. This derivation relied on the simultaneous measurement of multiple phosphorylated protein and phospholipid components in thousands of individual primary human immune system cells. Perturbing these cells with molecular interventions drove the ordering of connections between pathway components, wherein Bayesian network computational methods automatically elucidated most of the traditionally reported signaling relationships and predicted novel interpathway network causalities, which we verified experimentally. Reconstruction of network models from physiologically relevant primary single cells might be applied to understanding native-state tissue signaling biology, complex drug actions, and dysfunctional signaling in diseased cells.}
+}
+
+@inproceedings{wei2020,
+  title = {{{DAGs}} with {{No Fears}}: {{A Closer Look}} at {{Continuous Optimization}} for {{Learning Bayesian Networks}}},
+  shorttitle = {{{DAGs}} with {{No Fears}}},
+  booktitle = {Advances in {{Neural Information Processing Systems}}},
+  author = {Wei, Dennis and Gao, Tian and Yu, Yue},
+  year = {2020},
+  volume = {33},
+  pages = {3895--3906},
+  publisher = {Curran Associates, Inc.},
+  urldate = {2024-08-28},
+  abstract = {This paper re-examines a continuous optimization framework dubbed NOTEARS for learning Bayesian networks. We first generalize existing algebraic characterizations of acyclicity to a class of matrix polynomials. Next, focusing on a one-parameter-per-edge setting, it is shown that the Karush-Kuhn-Tucker (KKT) optimality conditions for the NOTEARS formulation cannot be satisfied except in a trivial case, which explains a behavior of the associated algorithm. We then derive the KKT conditions for an equivalent reformulation, show that they are indeed necessary, and relate them to explicit constraints that certain edges be absent from the graph. If the score function is convex, these KKT conditions are also sufficient for local minimality despite the non-convexity of the constraint. Informed by the KKT conditions, a local search post-processing algorithm is proposed and shown to substantially and universally improve the structural Hamming distance of all tested algorithms, typically by a factor of 2 or more. Some combinations with local search are both more accurate and more efficient than the original NOTEARS.}
 }
 
 @misc{zheng2018,
