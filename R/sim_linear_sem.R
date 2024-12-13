@@ -24,9 +24,9 @@
 #' nrow = 4, ncol = 4, byrow = TRUE)
 #' d <- ncol(B)
 #' X <- sim_linear_sem(B, n = 500, Sigma = 1 * diag(ncol(B)))
-sim_linear_sem <- function(W, n = 1, Sigma = diag(ncol(W))) {
+sim_linear_sem <- function(W, n = 1, Sigma = diag(ncol(W)), check_lower = TRUE) {
   d <- ncol(W)
-  if (! is_upper_tri(W) && ! is_lower_tri(W)) {
+  if (check_lower && ! is_upper_tri(W) && ! is_lower_tri(W)) {
     # TODO: Could attempt to topologically sort here before failing
     stop("W must be upper or lower triangular")
   }

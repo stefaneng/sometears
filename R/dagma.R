@@ -80,7 +80,14 @@ dagma_fit_linear <- function(
     }
 
     for (j in 1:epoch_i) {
-      optimizer$step(.calc_loss)
+      has_error <- FALSE
+      tryCatch({
+        optimizer$step(.calc_loss)
+      }, error = function(e) {
+        warnings("s is probably too small")
+        has_error <<- TRUE
+      })
+      if (has_error) break
     }
 
     if (trace) {

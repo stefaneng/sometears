@@ -24,16 +24,23 @@ dagma_fit_linear_optim <- function(
     l1_beta
   )
 
+  prev_val <- 0
   # Convert obj function into a vector
   obj_func <- function(W_vec, mu, s, l1_beta) {
     W <- matrix(W_vec, nrow = d, ncol = d)
 
     linear_loss <- l2_cov(W, X_cov)
     h_ldet_value <- h_logdet(W, s)
+    if (is.na(h_ldet_value)) {
+      warning("S is probably too small")
+      # This should short-circuit the optimization
+      return(prev_val)
+    }
 
     # Pull L1 loss out of objective function here
     # Reason being that the `lbfgs` optimizer does this internally
-    mu * (linear_loss) + h_ldet_value
+    prev_val <<- mu * (linear_loss) + h_ldet_value
+    prev_val
   }
 
   # Convert grad function into a vector
