@@ -157,7 +157,7 @@ For this we simulate similarly to [@deng2023] by drawing random DAGs and then si
 We evaluated by sampling an $d = 8$ dimensional adjacency matrix $B$, with sparsity of 80% with edge weights drawn from $[-2, -0.5] \cup [0.5, 2]$ uniformly.
 We simulated noise as independent normal $\epsilon \sim N(0, \sigma^2 = 0.25)$ such that the data is multivariate normal $X \sim N(0, (I - W)^{-1} \text{diag}(0.5) (I - W)^{-T})$.
 
-The three algorithm that we tested are:
+The three algorithms that we tested are:
 
 1. DAGMA using torch (using ADAM and L-BFGS-B)
 2. DAGMA using `lfgbs` R package to handle L1 optimization
@@ -227,7 +227,7 @@ bnlearn::graphviz.plot(dag)
 ## Contributions
 
 Jacob and Ye independently implemented an initial version of the TOPO algorithm which we combined into a single version as well as running the python version on the Sachs dataset.
-Stefan implemented the DAGMA algorithms, the linear SEM evaluation and wrote the R package, the documentation and miscellaneous functions.
+Stefan implemented the DAGMA algorithms, the linear SEM evaluation, wrote the R package, the documentation and miscellaneous functions.
 
 \newpage
 
