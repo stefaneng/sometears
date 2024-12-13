@@ -4,7 +4,7 @@
 \alias{sim_linear_sem}
 \title{Simulate from linear SEM}
 \usage{
-sim_linear_sem(W, n = 1, Sigma = diag(ncol(W)))
+sim_linear_sem(W, n = 1, Sigma = diag(ncol(W)), check_lower = TRUE)
 }
 \arguments{
 \item{W}{Adjacency matrix representing SEM (d x d)}

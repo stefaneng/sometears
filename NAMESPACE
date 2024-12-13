@@ -3,6 +3,7 @@
 export(adj_mat_to_long)
 export(dagma_fit_linear)
 export(dagma_fit_linear_optim)
+export(direct_to_total)
 export(fit_topo)
 export(h_expm)
 export(h_logdet)

@@ -19,8 +19,8 @@ dagma_fit_linear(
 
 dagma_fit_linear_optim(
   X,
-  loss = torch_l2_cov,
-  h_func = torch_h_logdet,
+  loss = l2_cov,
+  h_func = h_logdet,
   s = 1.1,
   mu = c(1, 0.1, 0.01),
   l1_beta = 1e-04,

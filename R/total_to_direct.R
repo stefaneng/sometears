@@ -42,6 +42,7 @@ total_to_direct <- function(
   return(result)
 }
 
+#' @export
 #' @rdname total_direct_conversion
 direct_to_total <- function(
     W,
