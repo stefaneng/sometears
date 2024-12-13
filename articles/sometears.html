@@ -229,6 +229,60 @@ linear case and is able to recover the true DAG.</p>
 <span><span class="co">#&gt; [3,]    0 0.000  0.000  1.969</span></span>
 <span><span class="co">#&gt; [4,]    0 0.000  0.000  0.000</span></span></code></pre></div>
 </div>
+<div class="section level3">
+<h3 id="sachs-data-analysis">Sachs data analysis<a class="anchor" aria-label="anchor" href="#sachs-data-analysis"></a>
+</h3>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">sachs</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1234</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">d_sachs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">sachs</span><span class="op">)</span></span>
+<span><span class="va">est_sachs</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fit_topo.html">fit_topo</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="va">sachs</span><span class="op">)</span>, <span class="fl">1</span><span class="op">:</span><span class="va">d_sachs</span>, s<span class="op">=</span><span class="fl">1.1</span><span class="op">)</span><span class="op">$</span><span class="va">W</span></span>
+<span></span>
+<span><span class="va">col_names</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">sachs</span><span class="op">)</span></span>
+<span><span class="va">result_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>from <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>, to <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>, strength <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>, direction <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>, stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="va">threshold_graph</span> <span class="op">&lt;-</span> <span class="fl">0.5</span></span>
+<span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">est_sachs</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="kw">for</span> <span class="op">(</span><span class="va">j</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">est_sachs</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="kw">if</span> <span class="op">(</span><span class="op">(</span><span class="va">est_sachs</span><span class="op">[</span><span class="va">i</span>, <span class="va">j</span><span class="op">]</span> <span class="op">&gt;</span> <span class="va">threshold_graph</span><span class="op">)</span> <span class="op">||</span> <span class="op">(</span><span class="va">est_sachs</span><span class="op">[</span><span class="va">i</span>, <span class="va">j</span><span class="op">]</span> <span class="op">&lt;</span> <span class="op">-</span><span class="va">threshold_graph</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>      <span class="va">new_row</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>from <span class="op">=</span> <span class="va">col_names</span><span class="op">[</span><span class="va">i</span><span class="op">]</span>, to <span class="op">=</span> <span class="va">col_names</span><span class="op">[</span><span class="va">j</span><span class="op">]</span><span class="op">)</span></span>
+<span>      <span class="va">result_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">result_df</span>, <span class="va">new_row</span><span class="op">)</span></span>
+<span>    <span class="op">}</span></span>
+<span>  <span class="op">}</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"bnlearn"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">dag</span> <span class="op">&lt;-</span> <span class="fu">bnlearn</span><span class="fu">::</span><span class="fu">empty.graph</span><span class="op">(</span>nodes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">sachs</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="fu">bnlearn</span><span class="fu">::</span><span class="fu">arcs</span><span class="op">(</span><span class="va">dag</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">result_df</span></span>
+<span>  <span class="fu">bnlearn</span><span class="fu">::</span><span class="fu">graphviz.plot</span><span class="op">(</span><span class="va">dag</span><span class="op">)</span></span>
+<span><span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">est_sachs</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span><span class="co">#&gt;              [,1]        [,2]         [,3]        [,4]        [,5]        [,6]</span></span>
+<span><span class="co">#&gt;  [1,] 0.000000000  0.00000000  0.000000000  0.17194605  0.07877942  0.07385326</span></span>
+<span><span class="co">#&gt;  [2,] 1.352252378  0.00000000  0.000000000  0.25278685  0.07214880 -0.00900717</span></span>
+<span><span class="co">#&gt;  [3,] 0.373731358  0.49456100  0.000000000  0.78436901  0.52048313  0.29225973</span></span>
+<span><span class="co">#&gt;  [4,] 0.000000000  0.00000000  0.000000000  0.00000000  0.00000000  0.00000000</span></span>
+<span><span class="co">#&gt;  [5,] 0.000000000  0.00000000  0.000000000  0.80603604  0.00000000  0.00000000</span></span>
+<span><span class="co">#&gt;  [6,] 0.000000000  0.00000000  0.000000000 -0.18228967 -0.08522520  0.00000000</span></span>
+<span><span class="co">#&gt;  [7,] 0.000000000  0.00000000  0.000000000  0.14364721  0.05793260  0.00000000</span></span>
+<span><span class="co">#&gt;  [8,] 0.000000000  0.00000000  0.000000000  0.00000000  0.00000000  0.00000000</span></span>
+<span><span class="co">#&gt;  [9,] 0.006803594 -0.01034267 -0.007080206  0.05773732 -0.02518768  0.07983138</span></span>
+<span><span class="co">#&gt; [10,] 0.229475400  0.44804562  0.434849430  0.36661795  0.32247086  0.23740054</span></span>
+<span><span class="co">#&gt; [11,] 0.000000000  0.00000000  0.000000000  0.08633655  0.00000000  0.00000000</span></span>
+<span><span class="co">#&gt;              [,7]        [,8] [,9]    [,10]      [,11]</span></span>
+<span><span class="co">#&gt;  [1,]  0.04033524   2.0653899    0 0.000000  0.2553003</span></span>
+<span><span class="co">#&gt;  [2,] -0.02151390  -0.5569615    0 0.000000 -0.2308707</span></span>
+<span><span class="co">#&gt;  [3,]  0.13137972   3.1332025    0 0.000000  0.4849756</span></span>
+<span><span class="co">#&gt;  [4,]  0.00000000   0.1651542    0 0.000000  0.0000000</span></span>
+<span><span class="co">#&gt;  [5,]  0.00000000   0.2235938    0 0.000000  0.1478282</span></span>
+<span><span class="co">#&gt;  [6,]  1.40166072 -14.8242956    0 0.000000 -0.2967703</span></span>
+<span><span class="co">#&gt;  [7,]  0.00000000  12.0324482    0 0.000000  0.2146607</span></span>
+<span><span class="co">#&gt;  [8,]  0.00000000   0.0000000    0 0.000000  0.0000000</span></span>
+<span><span class="co">#&gt;  [9,]  0.06345477  -0.2720148    0 1.881136 -1.5427374</span></span>
+<span><span class="co">#&gt; [10,]  0.12184941   4.6164549    0 0.000000  0.9780254</span></span>
+<span><span class="co">#&gt; [11,]  0.00000000   0.2590884    0 0.000000  0.0000000</span></span></code></pre></div>
+</div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
