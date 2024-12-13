@@ -1,7 +1,7 @@
 # sometears - Continuous Structure Learning in R <img src="man/figures/logo.png" align="right" height="139" alt="" />
 
 ## Installation
-```{r}
+```r
 devtools::install_github("stefaneng/sometears")
 
 # To run the Sachs data we need to install the following packages from bioconductor
