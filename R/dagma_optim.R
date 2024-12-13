@@ -2,8 +2,8 @@
 #' @rdname dagma_fit_linear
 dagma_fit_linear_optim <- function(
     X,
-    loss = torch_l2_cov,
-    h_func = torch_h_logdet,
+    loss = l2_cov,
+    h_func = h_logdet,
     s = 1.1,
     mu = c(1, 0.1, 0.01),
     l1_beta = 1e-4,
@@ -29,8 +29,8 @@ dagma_fit_linear_optim <- function(
   obj_func <- function(W_vec, mu, s, l1_beta) {
     W <- matrix(W_vec, nrow = d, ncol = d)
 
-    linear_loss <- l2_cov(W, X_cov)
-    h_ldet_value <- h_logdet(W, s)
+    linear_loss <- loss(W, X_cov)
+    h_ldet_value <- h_func(W, s)
     if (is.na(h_ldet_value)) {
       warning("S is probably too small")
       # This should short-circuit the optimization
