@@ -32,7 +32,10 @@ This function generates data from a simple linear SEM with a given adjacency mat
 We assume that the errors are normally distributed with mean 0 and variance $\Sigma = \text{diag}(1)$ such that
 
 $$
-X = X W + \epsilon \quad \epsilon \sim N(0, \Sigma)\\
+X = X W + \epsilon \quad \epsilon \sim N(0, \Sigma)
+$$
+
+$$
 (I - W)^{-1} X \sim N(0, (I - W)^{-T} \Sigma (I - W)^{-1})
 $$
 
