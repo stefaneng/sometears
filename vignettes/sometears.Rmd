@@ -134,3 +134,33 @@ We find that this algorithm works extremely fast in the linear case and is able 
 est_B <- fit_topo(X, d:1)
 print(round(est_B$W, 3))
 ```
+
+## Sachs data analysis
+
+```{r}
+data(sachs)
+set.seed(1234)
+
+d_sachs <- ncol(sachs)
+est_sachs <- fit_topo(as.matrix(sachs), 1:d_sachs, s=1.1)$W
+
+col_names <- colnames(sachs)
+result_df <- data.frame(from = character(), to = character(), strength = numeric(), direction = character(), stringsAsFactors = FALSE)
+threshold_graph <- 0.5
+for (i in 1:nrow(est_sachs)) {
+  for (j in 1:ncol(est_sachs)) {
+    if ((est_sachs[i, j] > threshold_graph) || (est_sachs[i, j] < -threshold_graph)) {
+      new_row <- data.frame(from = col_names[i], to = col_names[j])
+      result_df <- rbind(result_df, new_row)
+    }
+  }
+}
+
+if (requireNamespace("bnlearn", quietly = TRUE)) {
+  dag <- bnlearn::empty.graph(nodes = colnames(sachs))
+  bnlearn::arcs(dag) <- result_df
+  bnlearn::graphviz.plot(dag)
+} else {
+  print(est_sachs)
+}
+```

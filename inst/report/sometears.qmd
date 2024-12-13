@@ -24,6 +24,8 @@ format:
 include-in-header:
   text: |
     \usepackage{setspace}
+    \usepackage{algorithm}
+    \usepackage{algpseudocode}
     \onehalfspacing
     \linespread{1.5}
 abstract: |
@@ -59,6 +61,47 @@ The project is named after the original continuous acyclicity function NOTEARS [
 
 ## Algorithm
 
+### DAGMA
+
+The DAGMA algorithm [@bello2023] is a continuous optimization algorithm that learns the structure of a Directed Acyclic Graph (DAG) from data.
+The goal is to optimize the objective function 
+
+$$
+\min_{\theta} Q(\theta; X) + \beta_1 \| \theta\|_1 \quad \text{subject to } h_{ldet}^s(W(\theta)) = 0
+$$
+where $Q$ is the loss function, $s$ is a regularization parameter, and $\beta_1$ is a $\ell_1$ regularization parameter.
+$W$ is the adjacency matrix of the DAG represented by the parameters $\theta$ which we will refer to as $W$, dropping the $\theta$ and assume that $W$ simply creates a matrix from the parameter vector $\theta$.
+The continuous acyclicity function $h_{\text{ldet}}(W)$ is used to enforce the acyclicity constraint and is defined as:
+
+$$
+\begin{aligned}
+h_{\text{ldet}}^s(W) &:= -\log \det (s I - W \circ W) + d \log s\\
+\nabla h_{\text{ldet}}^s(W) &:= 2(sI - W \circ W)^{-T} \circ W
+\end{aligned}
+$$
+
+The authors note that _each_ computation of $h_{ldet}$ takes $O(d^3)$ operations.
+
+The algorithm starts by optimizing more heavily towards the loss function and $\ell_1$ norm and gradually shifts towards making the solution acyclic.
+
+- Input:
+  - $X$: Data matrix
+  - $s$: Regularization parameter (larger than the spectral radius of $X$)
+  - $\mu$: Weights on the loss function e.g. $\mu = c(10, 5, 1, 0.1)$ 
+  - $\beta_1$: $\ell_1$ regularization parameter (e.g. $0.1$)
+- Output: $W$, the adjacency matrix of the DAG that best maximizes the objective function.
+
+For each $\mu_t \in mu$ solve the optimization problem:
+
+$$
+\theta^{(t + 1)} = \underset{\theta}{\text{arg min}}~ \mu_t \left[ Q(\theta; X) +  \beta_1 \| \theta\|_1 \right] + h_{ldet}^s(W(\theta))
+$$
+
+The DAGMA algorithm does not specify a specific way to solve this problem but the authors use the ADAM optimizer [@kingma2017].
+
+### TOPO
+The TOPO algorithm [@deng2023] aims to solve the same problem as DAGMA but aims to do so by iteratively swapping elements in a valid topological order so that the solutions is always acyclic.
+
 ## Evaluation
 
 ### Linear SEM Simulation
@@ -79,7 +122,7 @@ We use the loss function multiplier $\mu = (10, 5, 1, 0.1)$, the log-determinant
 We did implement DAGMA using the torch ADAM automatic differentiation method in R but found that without careful selection of hyper-parameters the optimization often failed.
 Using the L-BFGS-B optimizer within torch performed better and was less sensitive to the choice of hyper-parameters.
 The DAGMA implementation in python uses a custom ADAM optimizer with some better logic for re-adjusting hyper-parameters during the optimization if the solution diverges from a valid solution.
-This was not easy to do with torch in R.
+We decided to focus our efforts on the TOPO implementation rather than optimizing the DAGMA implementation.
 
 ```{r results-plot}
 #| label: fig-results-plot
@@ -126,6 +169,13 @@ ggplot(., aes(x = method, y = value, fill = as.factor(d))) +
        y = "Accuracy") +
   scale_fill_manual(values = colortheme2, name = "Dimension")
 ```
+
+### Sachs Dataset
+
+The Sachs dataset [@sachs2005] is a commonly used dataset benchmark in the study of causal network discovery.
+This dataset contains data on protein-signaling networks of continuous measurements of protein and phospholipid expression levels in human immune cells obtained through single cell analysis.
+The reason this dataset is used is that there is a known gold standard causal network that we can compare our results to.
+
 
 ## Contributions
 
