@@ -1,10 +1,14 @@
 # sometears - Continuous Structure Learning in R <img src="man/figures/logo.png" align="right" height="139" alt="" />
 
 ## Installation
+
 ```r
 devtools::install_github("stefaneng/sometears")
 
-# To run the Sachs data we need to install the following packages from bioconductor
+# If you want to run the torch code (DAGMA-torch) you need to install torch
+torch::install_torch()
+
+# To plot the Sachs data we need to install the following packages from bioconductor
 if (!require("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
 
@@ -13,7 +17,11 @@ BiocManager::install("Rgraphviz")
 
 ## Introduction
 
-Network structure learning involves finding optimal solutions with the constraints that traits of interest have a directed acyclic graph (DAG) structure. Optimizing an objective function with the combinatorial constraint of a DAG is a difficult problem due to the number of DAGs increasing super-exponentially (Rodionov, 1992) so it is difficult to explore the entire graph space. The issue of finding a directed acyclic graph is related to finding a topological sort of a graph, i.e., a temporal ordering of the nodes in the graph such that for any i < j, there is no edge from node j to node i. This ordering is not generally unique and only exists if the graph is acyclic. Recent work has involved transforming the combinatorial acyclicity constraint to a continuous optimization problem (Bello et al., 2023; Wei et al., 2020; Zheng et al., 2018). The objective function with a DAG constraint is non-convex and has issues with local optimum. The latest work in this sequence of papers aims to escape local optima by swapping nodes in valid topological orderings to explore other regions of the DAG space with topological swaps (Deng et al., 2023).
+Network structure learning involves finding optimal solutions with the constraints that traits of interest have a directed acyclic graph (DAG) structure. Optimizing an objective function with the combinatorial constraint of a DAG is a difficult problem due to the number of DAGs increasing super-exponentially (Rodionov, 1992) so it is difficult to explore the entire graph space.
+The issue of finding a directed acyclic graph is related to finding a topological sort of a graph, i.e., a temporal ordering of the nodes in the graph such that for any i < j, there is no edge from node j to node i.
+This ordering is not generally unique and only exists if the graph is acyclic.
+Recent work has involved transforming the combinatorial acyclicity constraint to a continuous optimization problem (Bello et al., 2023; Wei et al., 2020; Zheng et al., 2018).
+The objective function with a DAG constraint is non-convex and has issues with local optimum. The latest work in this sequence of papers aims to escape local optima by swapping nodes in valid topological orderings to explore other regions of the DAG space with topological swaps (Deng et al., 2023).
 
 ## References
 

@@ -143,7 +143,7 @@ The outline of the algorithm is as follows:
 
 1. Initialize an ordering of the variables $\pi^{(0)}$
 2. Find all candidate pairs of swaps in the set $\mathcal Y(\Theta_\pi^*, \tau^*, \xi^*)$ that would improve the objective function
-3. Select the best swap and up date the ordering $\pi^{(t + 1)}$
+3. Select the best swap and update the ordering $\pi^{(t + 1)}$
 4. Repeat until no more swaps can be made
 
 A detailed description and technical details to why this algorithm works can be found in the original paper.
