@@ -1,5 +1,6 @@
 library(sometears)
 library(caret)
+library(tibble)
 
 confusion_to_df <- function(confusion) {
   tibble::rownames_to_column(

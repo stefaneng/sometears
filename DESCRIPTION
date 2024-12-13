@@ -13,13 +13,16 @@ Authors@R: c(
     person("Ye", "Tian", , "tianyee@umich.edu", role = "ctb")
   )
 Suggests: 
+    caret,
     ggdag,
     knitr,
     lbfgs,
     rmarkdown,
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
+    tibble
 Config/testthat/edition: 3
 Imports: 
+    dplyr,
     expm,
     matrixcalc,
     torch

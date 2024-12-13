@@ -70,9 +70,9 @@ dagma_fit_linear_optim <- function(
       s = s,
       l1_beta = l1_beta,
       vars = W_init,
-      linesearch_algorithm="LBFGS_LINESEARCH_BACKTRACKING",
+      linesearch_algorithm = "LBFGS_LINESEARCH_BACKTRACKING",
       invisible = 1,
-      orthantwise_c=l1_beta
+      orthantwise_c = l1_beta
     )
 
     # Update W_init for the next parameter set

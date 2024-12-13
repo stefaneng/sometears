@@ -40,5 +40,13 @@ sim_linear_sem <- function(W, n = 1, Sigma = diag(ncol(W)), check_lower = TRUE) 
     inv_W <- t(inv_W)
   }
   new_Sigma <-  inv_W %*% tcrossprod(Sigma, inv_W)
-  MASS::mvrnorm(n = n, mu = rep(0, d), Sigma = new_Sigma)
+  # Sample from MVN
+  # Use MASS if available otherwise do simple cholesky
+  if (F && requireNamespace("MASS", quietly = TRUE)) {
+    MASS::mvrnorm(n = n, mu = rep(0, d), Sigma = new_Sigma)
+  } else {
+    Z <- matrix(rnorm(n * d), nrow = d, ncol = n)
+    U <- chol(new_Sigma)
+    t(crossprod(U,Z))
+  }
 }

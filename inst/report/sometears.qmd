@@ -69,7 +69,6 @@ The project is named after the original continuous acyclicity function NOTEARS [
 
 Given an objective function $Q(\Theta; X)$, where $\Theta$ is the parameter vector of the DAG and $X$ is the data matrix, the problem is to find the optimal $\Theta$ that minimizes the objective function while satisfying the acyclicity constraint.
 An acyclicty function $h$ is used to enforce the acyclicity constraint and is continuous and differentiable.
-
 The basic idea behind continuous structure learning is to transfer the combinatoral constraint to a continuous optimization
 
 $$
@@ -110,7 +109,7 @@ h_{\text{ldet}}^s(W) &:= -\log \det (s I - W \circ W) + d \log s\\
 \end{aligned}
 $$
 
-The authors note that _each_ computation of $h_{ldet}$ takes $O(d^3)$ operations.
+$h_{ldet}$ takes $O(d^3)$ operations.
 The algorithm starts by optimizing more heavily towards the loss function and $\ell_1$ norm and gradually shifts towards making the solution acyclic.
 
 - Input:
