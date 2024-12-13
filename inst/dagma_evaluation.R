@@ -1,7 +1,27 @@
 library(sometears)
 library(caret)
 
-for (d in c(10, 15, 20)) {
+eval_results_10 <- readRDS("evaluation_results_10.rds")
+eval_results_15 <- readRDS("evaluation_results_15.rds")
+
+confusion_to_df <- function(confusion) {
+  tibble::rownames_to_column(
+    data.frame(
+      value = c(confusion$overall, confusion$byClass)
+    ), "metric")
+}
+
+results_to_df <- function(results) {
+  bind_rows(lapply(results, function(x) {
+    bind_rows(
+      tibble::add_column(confusion_to_df(x$confusion_torch), method = "DAGMA-torch"),
+      tibble::add_column(confusion_to_df(x$confusion_lbfgs), method = "DAGMA-lbfgs"),
+      tibble::add_column(confusion_to_df(x$confusion_topo), method = "TOPO")
+    )
+  }), .id = "id")
+}
+
+all_results <- lapply(c(10, 15), function(d) {
   results <- replicate(100, {
     n <- 500
     lower_tri_size <- d * (d - 1) / 2
@@ -52,9 +72,17 @@ for (d in c(10, 15, 20)) {
     )
   }, simplify = FALSE)
 
+
   saveRDS(results, sprintf("eval_results/evaluation_results_%s.rds", d))
-}
+  results_df <- results_to_df(results)
+  results_df$d <- d
+  saveRDS(results_df, sprintf("inst/report/evaluation_results_df_%s.rds", d))
 
+  results_df
+})
 
+confusion_results <- bind_rows(
+  results_df
+)
 
-
+saveRDS(confusion_results, "confusion_results_plot.rds")

@@ -130,35 +130,7 @@ We decided to focus our efforts on the TOPO implementation rather than optimizin
 #| fig-width: 8
 #| fig-cap: "Comparison of the two DAGMA methods and the TOPO method on a linear SEM simulation."
 
-eval_results_10 <- readRDS("evaluation_results_10.rds")
-eval_results_15 <- readRDS("evaluation_results_15.rds")
-
-results_to_df <- function(results) {
-  bind_rows(lapply(results, function(x) {
-    bind_rows(
-      tibble::rownames_to_column(
-        data.frame(
-          value = c(x$confusion_torch$overall, x$confusion_torch$byClass)
-          ), "metric") %>%
-        tibble::add_column(method = "DAGMA-torch"),
-      tibble::rownames_to_column(
-        data.frame(
-          value = c(x$confusion_lbfgs$overall, x$confusion_lbfgs$byClass)
-          ), "metric") %>%
-        tibble::add_column(method = "DAGMA-lfgbs"),
-      tibble::rownames_to_column(
-        data.frame(
-          value = c(x$confusion_topo$overall, x$confusion_topo$byClass)
-          ), "metric") %>%
-        tibble::add_column(method = "TOPO")
-    )
-  }), .id = "id")
-}
-
-confusion_results <- bind_rows(
-  cbind(results_to_df(eval_results_10), d = 10),
-  cbind(results_to_df(eval_results_15), d = 15)
-)
+conusion_results <- readRDS("confusion_results_plot.rds")
 
 confusion_results %>%
   filter(metric %in% c("Accuracy", "Sensitivity", "Specificity", "F1")) %>%
