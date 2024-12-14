@@ -225,8 +225,8 @@ bnlearn::graphviz.plot(dag)
 
 ## Contributions
 
-Jacob and Ye independently implemented an initial version of the TOPO algorithm which we combined into a single version as well as running the python version on the Sachs dataset.
-Stefan implemented the DAGMA algorithms, the linear SEM evaluation, wrote the R package, the documentation and miscellaneous functions.
+Jacob and Ye independently implemented an initial version of the TOPO algorithm which we combined into a single version, ran the python version on the Sachs dataset and compared the results to the R version.
+Stefan made additional changes to the TOPO algorithm, implemented the DAGMA algorithms, the linear SEM evaluation, wrote the R package, the documentation and miscellaneous functions.
 
 \newpage
 

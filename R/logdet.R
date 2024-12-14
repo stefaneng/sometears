@@ -36,8 +36,13 @@ h_logdet <- function(X, s = 1, transform = c("square", "abs")) {
 }
 
 #' @rdname h_logdet
-h_logdet_grad <- function(X, s = 1) {
-  # TODO! Need to fix for abs and square option
+h_logdet_grad <- function(X, s = 1, transform = c("square", "abs")) {
   d <- ncol(X)
-  2 * solve(t(s * diag(d) - X * X)) * X
+  transform <- match.arg(transform)
+  if (transform == "abs") {
+    # Note: This is how the gradient is computed in the topo python package
+    solve(t(s * diag(d) - abs(X)))
+  } else if (transform == "square") {
+    2 * solve(t(s * diag(d) - X * X)) * X
+  }
 }

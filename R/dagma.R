@@ -19,18 +19,20 @@
 #' @export
 #'
 #' @examples
-#'
+#' \dontrun{
 #' B <- matrix(
-#' c(0, 3, 0, 3,
-#'  0, 0, 3, 0,
-#'  0, 0, 0, 3,
-#'  0, 0, 0, 0),
-#' nrow = 4, ncol = 4, byrow = TRUE)
-#' # Simulate from the DAG
-#' d <- ncol(B)
-#' X <- sim_linear_sem(B, n = 500, Sigma = 1 * diag(ncol(B)))
+#'   c(0, 3, 0, 3,
+#'    0, 0, 3, 0,
+#'    0, 0, 0, 3,
+#'    0, 0, 0, 0),
+#'   nrow = 4, ncol = 4, byrow = TRUE)
+#'   # Simulate from the DAG
+#'   d <- ncol(B)
+#'   X <- sim_linear_sem(B, n = 500, Sigma = 1 * diag(ncol(B)))
 #'
-#' print(threshold_W(dagma_fit_linear(X, mu = c(10, 1, 0.1, 0.01, 0.001), l1_beta = 0.05), 0.1))
+#'   print(threshold_W(dagma_fit_linear(X, mu = c(10, 1, 0.1, 0.01, 0.001), l1_beta = 0.05), 0.1))
+#'   print(threshold_W(dagma_fit_linear_optim(X, mu = c(10, 1, 0.1, 0.01, 0.001), l1_beta = 0.05), 0.1))
+#' }
 dagma_fit_linear <- function(
   X,
   loss = torch_l2_cov,
